@@ -1,0 +1,9 @@
+"ensemble"&"simple mean"&"glasso - ebic - 0"&"glasso - ebic - 0.5"&"glasso - ric"&"hglasso"&"mle"&"glasso - stars - 0.05"&"glasso - stars - 0.1"&"qgraph - ebic - 0"&"qgraph - ebic - 0.5"
+"erLow"&1&1&1&1&1&1&0.9999&1&1&1&1
+"erHigh"&1&1&1&1&1&1&0.9999&1&1&1&1
+"wsLow"&1&1&1&1&1&1&0.9999&1&1&1&1
+"wsHigh"&1&1&1&1&1&1&0.9999&1&1&1&1
+"sfLow"&1&1&1&1&1&1&0.9999&1&1&1&1
+"sfHigh"&1&1&1&1&1&1&0.9999&1&1&1&1
+"hsLow"&1&1&1&1&1&1&0.9999&1&1&1&1
+"hsHigh"&1&1&1&1&1&1&0.9999&1&1&1&1

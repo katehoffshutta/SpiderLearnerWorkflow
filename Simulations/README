@@ -1,0 +1,24 @@
+Each of these files runs a simulation from the paper.
+Note that many simulations use multiple cores; you may need to modify this for your machine. 
+
+20210304_kfold_sensitivity.R: run analysis for choosing K
+
+20210305_runPaperSimsA.R: run Simulation A
+
+20210307_runPaperSimsD.R: run Simulation D
+
+20210325_runPaperSimsB.R: run Simulation B
+
+20210326_runPaperSimsC.R: run Simulation C
+
+20210327_library_sensitivity.R: study library sensitivity in simulation setting
+
+20210328_ovarianDataSmall.R: study library sensitivity in ovarian cancer setting
+
+20210603_ovarianActiveSubnets.R: ovarian cancer GGM estimation, risk score development, and risk score validation
+
+20210608_mleStudy.R: study how graph density affects the weight of the MLE in the SpiderLearner ensemble
+
+20210610_runtimeStudy.R: look at runtime for various n,p
+
+

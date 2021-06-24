@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+
+\begin{eqnarray}
+\hat\Theta_1^{(-1)} \\
+\hat\Theta_2^{(-1)} \\
+\hat\Theta_3^{(-1)} \\
+\hat\Theta_4^{(-1)}\\
+\end{eqnarray}
+
+\begin{equation}
+\left(
+\begin{matrix}
+\hat\Theta_1^{(-1)} & \hat\Theta_1^{(-2)} & \hat\Theta_1^{(-3)}  & \hat\Theta_1^{(-4)} & \hat\Theta_1^{(-5)} \\
+\hat\Theta_2^{(-1)} & \hat\Theta_2^{(-2)} & \hat\Theta_2^{(-3)}  & \hat\Theta_2^{(-4)} & \hat\Theta_2^{(-5)} \\
+\hat\Theta_3^{(-1)} & \hat\Theta_3^{(-2)} & \hat\Theta_3^{(-3)}  & \hat\Theta_3^{(-4)} & \hat\Theta_3^{(-5)} \\
+\hat\Theta_4^{(-1)} & \hat\Theta_4^{(-2)} & \hat\Theta_4^{(-3)}  & \hat\Theta_4^{(-4)} & \hat\Theta_4^{(-5)}
+\end{matrix}
+\right)
+\end{equation}
+
+\begin{equation}
+\Theta_{SL}^{(-1)} = \alpha_1\hat\Theta_1^{(-1)} + \alpha_2\hat\Theta_2^{(-1)} + \alpha_3\hat\Theta_3^{(-1)} + \alpha_4\hat\Theta_4^{(-1)}
+\end{equation}
+
+\begin{eqnarray}
+\Theta_{SL}^{(-1)} \\
+\Theta_{SL}^{(-2)} \\
+\Theta_{SL}^{(-3)} \\
+\Theta_{SL}^{(-4)} \\
+\Theta_{SL}^{(-5)} \\
+\end{eqnarray}
+
+\begin{equation}
+Q_k(\boldsymbol\alpha) &=& \frac{n}{2}\log \left(|\alpha_1\hat\Theta_1^{(-k)} + \dots + \alpha_4\hat\Theta_4^{(-k)}|\right) \\
+&+& \frac{1}{2} \sum_{i=1}^n (X^{(i)}_{k})^T \left(\alpha_1\hat\Theta_1^{(-k)} + \dots + \alpha_4\hat\Theta_4^{(-k)}\right) X^{(i)}_{k}
+\end{equation}
+
+\begin{eqnarray}
+\bar{Q}(\boldsymbol\alpha) &=& \frac{1}{5}\sum_{k=1}^5 \Big\{ \frac{n_k}{2}\log \left(|\alpha_1\hat\Theta_1^{(-k)} + \dots + \alpha_4\hat\Theta_4^{(-k)}|\right) \\
+&+& \frac{1}{2} \sum_{i=1}^{n_k} (X^{(i)}_{k})^T \left(\alpha_1\hat\Theta_1^{(-k)} + \dots + \alpha_4\hat\Theta_4^{(-k)}\right) X^{(i)}_k \Big\}
+\end{eqnarray}
+
+\begin{equation}
+\hat{\boldsymbol\alpha} = \text{argmin}_{\boldsymbol\alpha}\left\{\bar{Q}(\boldsymbol\alpha); \sum_{m=1}^M \alpha_m = 1; \alpha_m \geq 0\right\}
+\end{equation}
+
+\begin{eqnarray}
+X_{-1}: p \times (n-n_1) \\
+X_{1}: p \times n_1
+\end{eqnarray}
+\end{document}

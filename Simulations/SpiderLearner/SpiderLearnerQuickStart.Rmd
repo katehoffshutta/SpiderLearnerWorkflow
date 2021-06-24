@@ -1,0 +1,140 @@
+---
+title: "SpiderLearner Quick Start"
+author: "Kate Hoff Shutta"
+date: "6/22/2021"
+output: 
+  rmdformats::robobook:
+    code_folding: show
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,cache=T)
+```
+
+# Loading SpiderLearner
+
+To load the SpiderLearner code itself, simply source the R script:
+
+```{R message=F}
+source("SpiderLearner.R")
+```
+
+# Loading Example Data
+
+```{R message=F}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+# Uncomment this line to install the affy and curatedOvarianData package 
+# Takes time, so re-comment after
+# BiocManager::install("affy")
+# BiocManager::install("curatedOvarianData")
+
+library(affy)
+library(curatedOvarianData)
+```
+
+# Extracting and Standardizing Example Data
+
+```{R}
+standardize = function(x){return((x-mean(x))/sd(x))}
+
+data(GSE32062.GPL6480_eset)
+lateStage = exprs(GSE32062.GPL6480_eset)
+lateStageClinicalInfo = pData(GSE32062.GPL6480_eset)
+
+# Extract genes included in the HPO ovarian carcinoma pathway
+# See https://hpo.jax.org/app/browse/term/HP:0025318
+# Reference: Kohler et al. (2021) The Human Phenotype Ontology in 2021, Nucleic Acids Research, Volume 49, Issue D1, 8 January 2021, Pages D1207–D1217, https://doi.org/10.1093/nar/gkaa1043
+
+lateStageSmall = lateStage[c(1680,1681,3027,4564,8930,12243,12245,13694,13695,13701,13979,16082,16875,17980),]
+lateStageSmall = t(lateStageSmall)
+names(lateStageSmall) = colnames(lateStageSmall)
+lateStageSmall = apply(lateStageSmall,2,standardize)
+head(lateStageSmall)
+```
+
+# Instantiating the SpiderLearner and Adding Candidates
+
+```{R}
+s = SpiderLearner$new()
+
+apple = HugeEBICCandidate$new(gamma = 0)
+banana = HugeEBICCandidate$new(gamma = 0.5)
+clementine = HugeRICCandidate$new()
+date = HGlassoCandidate$new()
+elderberry = MLECandidate$new() 
+fraise = HugeStARSCandidate$new(thres = 0.05)
+grape = HugeStARSCandidate$new(thres = 0.1)
+honeydew = QGraphEBICCandidate$new(gamma = 0)
+icewine = QGraphEBICCandidate$new(gamma = 0.5)
+
+candidates = list(apple, 
+                  banana, 
+                  clementine, 
+                  date, 
+                  elderberry,
+                  fraise,
+                  grape,
+                  honeydew,
+                  icewine)
+
+for(candidate in candidates)
+{
+  s$addCandidate(candidate)
+}
+```
+
+# Running the SpiderLearner
+
+Here is the syntax for running the model. Output is fairly long, so I have suppressed it here. 
+
+```{R eval=FALSE}
+slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 1)
+```
+
+```{R include=FALSE}
+slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 1)
+```
+
+# Investigating SpiderLearner Results
+
+You can begin by looking at the weights of each candidate:
+
+```{R}
+round(slResults$weights,3)
+```
+
+A correlation plot of the SpiderLearner-estimated precision matrix will give you an idea of the sparsity of your estimated GGM:
+
+```{R message=F}
+library(corrplot)
+corrplot(slResults$optTheta,is.corr=F)
+```
+
+You can also access any of the precision matrices estimated by the candidate models - for example, here is the MLE:
+
+```{R}
+corrplot(slResults$fullModels[[5]],is.corr=F)
+```
+
+To plot the SpiderLearner GGM, we first convert the SpiderLearner precision matrix to the adjacency matrix of the corresponding GGM (matrix of partial correlations):
+
+```{R}
+adjMat = -cov2cor(slResults$optTheta)
+```
+
+Next, we can create and plot an `igraph` graph object from this matrix:
+
+```{R}
+slGraph = graph_from_adjacency_matrix(adjMat,weighted=T,mode="undirected",diag=F)
+E(slGraph)$width = 10*abs(E(slGraph)$weight)
+E(slGraph)$color = ifelse(E(slGraph)$weight>0,"red","blue")
+plot(slGraph,
+     vertex.color="white",
+     vertex.shape = "rectangle",
+     vertex.size = 60,
+     vertex.size2= 20,
+     layout=layout_with_graphopt)
+```
