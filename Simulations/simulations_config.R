@@ -1,7 +1,5 @@
 # code for simulation config object
-library(R6)
-
-SimConfig = R6Class("SimConfig", 
+SimConfig = R6::R6Class("SimConfig", 
                     public = list(
                       .candidates = list(), # list of Candidate objects
                       .nModels = 0,

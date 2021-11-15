@@ -1,7 +1,6 @@
+#library(devtools)
+#install_github("katehoffshutta/ensembleGGM")
 library(ensembleGGM)
-
-library(foreach)
-library(doParallel)
 
 source("errorMetrics.R")
 source("generateSimGraphs.R")
@@ -13,7 +12,7 @@ sampleNetworkData = function(N, covMat)
   return(sample)
 }
 
-runSimulation = function(simConfig)
+runSimulation = function(simConfig, whichNetworks = seq(1:8))
 {
   M = simConfig$.nModels
   P = simConfig$.nPred
@@ -29,8 +28,8 @@ runSimulation = function(simConfig)
   llsTest = matrix(rep(NA,(M+2)*NS),nrow=NS)
   ensModels = list()
   
-  for(index in 1:8)
-  {	
+  for(index in whichNetworks)
+  {
     set.seed(simConfig$.seed)
     thisNetwork = eightNetworks[[index]]
     
@@ -42,9 +41,6 @@ runSimulation = function(simConfig)
       
       thisSample = sampleNetworkData(N=simConfig$.nObs,covMat=solve(thisNetwork)) # sample network data function includes standardizing
       thisTestSample = sampleNetworkData(N=simConfig$.nObs,covMat=solve(thisNetwork))
-      
-      # run one fold per core
-      # be careful with this!
       
       ensModel = s$runSpiderLearner(thisSample,K=simConfig$.nFolds,standardize=FALSE,nCores=simConfig$.nCores)
       models = ensModel$fullModels
@@ -72,18 +68,20 @@ runSimulation = function(simConfig)
       
       ## store ensemble model itself
       ensModels[[j]] = ensModel
+      
+      ## Save at every iteration of the sims.
+      ## Not efficient because of the copying,
+      ## But helps in case the simulation is interrupted
+      theseResults = list("ensModels"=ensModels,
+                          "rfnAfter"=relFrobNormsAfter,
+                          "mrv"=matrixRVs,
+                          "llTrain"=lls,
+                          "llTest"=llsTest)
+      
+      save(theseResults,
+           file=paste(c(simConfig$.today,"_", suffixes[index], "_n_", simConfig$.nObs, "_p_",P,"_simStudy.rda"),collapse=""))
     }
-    
-    theseResults = list("ensModels"=ensModels,
-                        "rfnAfter"=relFrobNormsAfter,
-                        "mrv"=matrixRVs,
-                        "llTrain"=lls,
-                        "llTest"=llsTest)
-    
-    save(theseResults,
-         file=paste(c(today,"_", suffixes[index], "_n_", simConfig$.nObs, "_p_",P,"_simStudy.rda"),collapse=""))
   }
-  
 }
 
 apple = HugeEBICCandidate$new(gamma = 0)
@@ -96,17 +94,17 @@ grape = HugeStARSCandidate$new(thres = 0.1)
 honeydew = QGraphEBICCandidate$new(gamma = 0)
 icewine = QGraphEBICCandidate$new(gamma = 0.5)
 
-candidates_ld = list(apple, 
-                     banana, 
-                     clementine, 
-                     date, 
+candidates_ld = list(apple,
+                     banana,
+                     clementine,
+                     date,
                      elderberry,
                      fraise,
                      grape,
                      honeydew,
                      icewine)
 
-candidates_hd = candidates[-5]
+candidates_hd = candidates_ld[-5]
 
 suffixes = list("erLowPrec_RealData",
                 "erHighPrec_RealData",
@@ -119,11 +117,11 @@ suffixes = list("erLowPrec_RealData",
 
 # initialize = function(candidates,nPred,nObs,nFolds,nSim,nCores,seed)
 
-simAConfig = SimConfig$new(candidates = candidates_ld,
+simAConfigPilot = SimConfig$new(candidates = candidates_ld,
                            nPred = 50,
                            nObs = 10000,
-                           nFolds = 10,
-                           nSim = 1,
+                           nFolds = 2,
+                           nSim = 2,
                            nCores = 1,
                            seed = 221)
 
@@ -151,4 +149,4 @@ simDConfig = SimConfig$new(candidates = candidates_hd,
                            nCores = 1,
                            seed = 221)
 
-runSimulation(simAConfig)
+simAResults = runSimulation(simAConfigPilot, whichNetworks=1)
