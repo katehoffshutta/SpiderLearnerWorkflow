@@ -1,11 +1,8 @@
-library(huge)
+library(ensembleGGM)
 library(igraph)
-library(MASS)
 library(pracma)
-
+library(MASS)
 source("errorMetrics.R")
-source("spiderLearnerOOP.R")
-source("spiderLearnerCandidates.R")
 
 standardize = function(x){return((x-mean(x))/sd(x))}
 sampleNetworkData = function(N, covMat)
@@ -27,7 +24,7 @@ boost = function(myMatrix)
     return(myMatrix)
 }
 
-cathgenHist = read.csv("mxDist.csv")
+realDataHist = read.csv("mxDist.csv")
 
 #### Make Gold Standard Network Structures #### 
 
@@ -37,26 +34,17 @@ makeGoldStandardNetsB = function(P)
   PminusOne = P-1
   
   # make random graph
-  er1 = sample_gnp(P,0.05)
-  er2 = sample_gnp(P,0.1)
-  er3 = sample_gnp(P,0.25)
-  er4 = sample_gnp(P,0.5)
-  er5 = sample_gnp(P,0.75)
-  er6 = sample_gnp(P,1)
+  er1 = igraph::sample_gnp(P,0.05)
+  er2 = igraph::sample_gnp(P,0.1)
+  er3 = igraph::sample_gnp(P,0.25)
+  er4 = igraph::sample_gnp(P,0.5)
+  er5 = igraph::sample_gnp(P,0.75)
+  er6 = igraph::sample_gnp(P,1)
 
   
   #### Assign Edge Weights ####
-  
-  assignRunifEdgeWeights = function(graph, edgeMin=-1, edgeMax=1)
-  {
-    P = length(V(graph))
-    weights = sample(c(-1,1),size=length(E(graph)),replace=T)*runif(n = length(E(graph)), min = edgeMin, max = edgeMax) 
-    E(graph)$weights = weights
-    precMat = -1*as_adjacency_matrix(graph, attr = c("weights"), type="both") + diag(P)
-    return(list(graph, precMat))
-  }
-  
-  assignCathgenEdgeWeights = function(graph,ehist)
+   
+  assignRealDataEdgeWeights = function(graph,ehist)
   {
     P = length(V(graph))
     weights = sample(ehist$mids, replace=T,size=length(E(graph)), prob=ehist$density)  
@@ -66,26 +54,26 @@ makeGoldStandardNetsB = function(P)
   }
   
   
-  er1Cathgen = assignCathgenEdgeWeights(er1,cathgenHist)
-  er2Cathgen = assignCathgenEdgeWeights(er2,cathgenHist)
-  er3Cathgen = assignCathgenEdgeWeights(er3,cathgenHist)
-  er4Cathgen = assignCathgenEdgeWeights(er4,cathgenHist)
-  er5Cathgen = assignCathgenEdgeWeights(er5,cathgenHist)
-  er6Cathgen = assignCathgenEdgeWeights(er6,cathgenHist)
+  er1RealData = assignRealDataEdgeWeights(er1,realDataHist)
+  er2RealData = assignRealDataEdgeWeights(er2,realDataHist)
+  er3RealData = assignRealDataEdgeWeights(er3,realDataHist)
+  er4RealData = assignRealDataEdgeWeights(er4,realDataHist)
+  er5RealData = assignRealDataEdgeWeights(er5,realDataHist)
+  er6RealData = assignRealDataEdgeWeights(er6,realDataHist)
 
-  adjMatListCathgen = c(boost(er1Cathgen[[2]]),
-                        boost(er2Cathgen[[2]]),
-                        boost(er3Cathgen[[2]]),
-                        boost(er4Cathgen[[2]]),
-                        boost(er5Cathgen[[2]]),
-                        boost(er6Cathgen[[2]]))
-  for(mat in adjMatListCathgen)
+  adjMatListRealData = c(boost(er1RealData[[2]]),
+                        boost(er2RealData[[2]]),
+                        boost(er3RealData[[2]]),
+                        boost(er4RealData[[2]]),
+                        boost(er5RealData[[2]]),
+                        boost(er6RealData[[2]]))
+  for(mat in adjMatListRealData)
   {
     print(isposdef(as.matrix(mat)))
     print(min(eigen(mat)$values))
   }
   
-  return(adjMatListCathgen)
+  return(adjMatListRealData)
 }
 
 nPred = 50
@@ -93,8 +81,6 @@ nObs = 1600
 set.seed(42)
 
 sparseAdjMats = makeGoldStandardNetsB(nPred)
-
-s = SpiderLearner$new()
 
 apple = HugeEBICCandidate$new(gamma = 0)
 banana = HugeEBICCandidate$new(gamma = 0.5)
@@ -116,12 +102,10 @@ candidates = list(apple,
                   honeydew,
                   icewine)
 
-for(candidate in candidates)
-{
-  s$addCandidate(candidate)
-}
+s = MakeSpiderLearner(candidates)
 
 nIt = 30
+
 ensModelWeights = array(rep(NA,nIt*length(sparseAdjMats)*length(candidates)),dim=c(nIt,length(sparseAdjMats),length(candidates)))
 
 for(N in 1:nIt)
@@ -138,7 +122,7 @@ for(N in 1:nIt)
   }
 }
 
-save(ensModelWeights,file="mleWeights.rda")
+save(ensModelWeights,file="mleWeights_pkg.rda")
 
 # 
 # sparsityVec = c(0.05,0.10,0.25,0.5,0.75,1)

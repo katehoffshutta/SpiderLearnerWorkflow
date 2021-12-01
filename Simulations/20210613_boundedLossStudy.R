@@ -4,7 +4,7 @@ library(igraph)
 library(MASS)
 library(moments)
 library(pracma)
-source("SpiderLearner/SpiderLearner.R")
+library(ensembleGGM)
 
 standardize = function(x){return((x-mean(x))/sd(x))}
 sampleNetworkData = function(N, covMat)
@@ -26,9 +26,9 @@ boost = function(myMatrix)
     return(myMatrix)
 }
 
-#### Get discrete uniform distribution from CATHGEN Example ####
+#### Get discrete uniform distribution from REALDATA Example ####
 
-cathgenHist = read.csv("mxDist.csv")
+realDataHist = read.csv("mxDist.csv")
 
 #### Make Gold Standard Network Structures #### 
 
@@ -43,7 +43,7 @@ makeGoldStandardNet = function(P)
   #### Assign Edge Weights ####
  
   
-  assignCathgenEdgeWeights = function(graph,ehist)
+  assignRealDataEdgeWeights = function(graph,ehist)
   {
     P = length(V(graph))
     weights = sample(ehist$mids, replace=T,size=length(E(graph)), prob=ehist$density)  
@@ -53,13 +53,13 @@ makeGoldStandardNet = function(P)
   }
   
   
-  er1Cathgen = assignCathgenEdgeWeights(er1,cathgenHist)
+  er1RealData = assignRealDataEdgeWeights(er1,realDataHist)
  
-  adjMatCathgen = boost(er1Cathgen[[2]])
+  adjMatRealData = boost(er1RealData[[2]])
 
-  print(isposdef(as.matrix(adjMatCathgen)))
+  print(isposdef(as.matrix(adjMatRealData)))
  
-  return(adjMatCathgen)
+  return(adjMatRealData)
 }
 
 nPred = 50
