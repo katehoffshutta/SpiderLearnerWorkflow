@@ -4,8 +4,7 @@ library(igraph)
 library(MASS)
 library(moments)
 library(pracma)
-source("alphaCode/playground/SpiderLearner/SpiderLearner.R")
-
+library(ensembleGGM)
 
 
 standardize = function(x){return((x-mean(x))/sd(x))}
@@ -45,8 +44,7 @@ for(candidate in candidates)
 
 
 testRuntime = function(nPred, nObs, nFolds, eightNetworks,sl,index=1)
-{
-  
+{  
   X = sampleNetworkData(N = nObs,covMat = solve(eightNetworks[[index]]))
   start_time = Sys.time()
   ensModel = s$runSpiderLearner(X,K=nFolds,standardize=FALSE)
@@ -86,9 +84,6 @@ runtimes[[7]] = testRuntime(100,10000,10,eightNetworks,s,1)
 print("Runtime 8")
 runtimes[[8]] = testRuntime(100,1000,10,eightNetworks,s,1)
 
-set.seed(42)
-source("generateSimGraphsD.R")
-eightNetworks = makeGoldStandardNets(100)
 s$removeCandidate("mle")
 
 print("Runtime 9")

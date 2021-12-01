@@ -3,13 +3,17 @@ Note that many simulations use multiple cores; you may need to modify this for y
 
 20210304_kfold_sensitivity.R: run analysis for choosing K
 
-20210305_runPaperSimsA.R: run Simulation A
+# DEPRECATED #
+# 20210305_runPaperSimsA.R: run Simulation A #
+# 20210307_runPaperSimsD.R: run Simulation D #
+# 20210325_runPaperSimsB.R: run Simulation B #
+# 20210326_runPaperSimsC.R: run Simulation C #
 
-20210307_runPaperSimsD.R: run Simulation D
-
-20210325_runPaperSimsB.R: run Simulation B
-
-20210326_runPaperSimsC.R: run Simulation C
+simulations_A.R # requires 40 cores
+simulations_B.R # requires 40 cores
+simulations_C.R # requires 40 cores
+simulations_D_a.R # requires 40 cores
+simulations_D_b.R # requires 40 cores
 
 20210327_library_sensitivity.R: study library sensitivity in simulation setting
 
@@ -21,4 +25,16 @@ Note that many simulations use multiple cores; you may need to modify this for y
 
 20210610_runtimeStudy.R: look at runtime for various n,p
 
+OTHER FILES
 
+makeMxDist.R: shows how we made the metabolomics dataset distribution for edge weight sampling. You cannot run this as the raw data cannot be published; the purpose is just to show how we did it. This file generates the file mxDist.csv from the raw data.
+
+generateSimGraphs.R 
+
+generateSimGraphs_simD.R
+
+simulations_master.R
+
+simulations_config.R
+
+errorMetrics.R: Utility file that contains the functions used for assessing model performance

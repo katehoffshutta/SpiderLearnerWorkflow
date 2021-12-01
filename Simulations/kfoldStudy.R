@@ -1,17 +1,12 @@
-source("../spiderLearnerOOP.R")
-source("../spiderLearnerCandidates.R")
-load("../transfer/eightNetworksAC.rda")
+library(ensembleGGM)
 library(foreach)
 library(doParallel)
 library(MASS)
-# 
+
+set.seed(42) # this seed is ALWAYS 42
+eightNetworks = makeGoldStandardNets(P)
 
 precMat = eightNetworks[[2]] # Random graph, high density
-
-# 20210305 try the scale free graph to try to detect switching behavior
-
-# precMat = eightNetworks[[2]] 
-
 data = mvrnorm(150, mu = rep(0,nrow(precMat)), solve(precMat))
 
 s = SpiderLearner$new()
@@ -38,14 +33,8 @@ s$addCandidate(icewine)
 
 s$printLibrary()
 
-set.seed(42) # For the first 50 iterations
-
-# set.seed(311) # For the second 50 iterations
-
-R=50
-
-nSimCores = 50
-
+R=1 # 100
+nSimCores = 1 # 50
 
 registerDoParallel(nSimCores)
 simRes = foreach(r=1:R) %dopar%
@@ -72,4 +61,4 @@ simRes = foreach(r=1:R) %dopar%
 
 stopImplicitCluster()
 
-save(simRes,file="simRes_er_50_s42.rda")
+save(simRes,file="k_fold_sim.rda")
