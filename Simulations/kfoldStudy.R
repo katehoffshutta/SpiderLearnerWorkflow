@@ -5,7 +5,7 @@ library(MASS)
 source("generateSimGraphs.R")
 
 set.seed(42) # this seed is ALWAYS 42
-eightNetworks = makeGoldStandardNets(P)
+eightNetworks = makeGoldStandardNets(50)
 
 precMat = eightNetworks[[2]] # Random graph, high density
 data = mvrnorm(150, mu = rep(0,nrow(precMat)), solve(precMat))
