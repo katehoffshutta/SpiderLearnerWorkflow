@@ -7,7 +7,7 @@ library(pracma)
 
 #### Make Gold Standard Network Structures #### 
 
-makeGoldStandardNets = function(P)
+makeGoldStandardNets_simD = function(P)
 {
   PminusOne = P-1
   

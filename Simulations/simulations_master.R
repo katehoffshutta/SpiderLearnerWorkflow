@@ -17,11 +17,14 @@ runSimulation = function(simConfig, whichNetworks = seq(1:8))
   M = simConfig$.nModels
   P = simConfig$.nPred
   NS = simConfig$.nSim
-  
+
+  settingD = ifelse(simConfig$.nPred == 100,TRUE,FALSE)
+
   set.seed(42) # this seed is ALWAYS 42
-  eightNetworks = makeGoldStandardNets(P)
-  print(M)
-  print(NS)
+  if(settingD) eightNetworks = makeGoldStandardNets_simD(P)
+  else 
+  { eightNetworks = makeGoldStandardNets(P)}
+
   relFrobNormsAfter = matrix(rep(NA,(M+2)*NS),nrow=NS)
   matrixRVs = matrix(rep(NA,(M+2)*NS),nrow=NS)
   lls = matrix(rep(NA,(M+2)*NS),nrow=NS)
@@ -115,38 +118,3 @@ suffixes = list("erLowPrec_RealData",
                 "hsLowPrec_RealData",
                 "hsHighPrec_RealData")
 
-# initialize = function(candidates,nPred,nObs,nFolds,nSim,nCores,seed)
-
-simAConfigPilot = SimConfig$new(candidates = candidates_ld,
-                           nPred = 50,
-                           nObs = 10000,
-                           nFolds = 2,
-                           nSim = 2,
-                           nCores = 1,
-                           seed = 221)
-
-simBConfig = SimConfig$new(candidates = candidates_ld,
-                           nPred = 50,
-                           nObs = 1600,
-                           nFolds = 10,
-                           nSim = 1,
-                           nCores = 1,
-                           seed = 221)
-
-simCConfig = SimConfig$new(candidates = candidates_ld,
-                           nPred = 50,
-                           nObs = 100,
-                           nFolds = 10,
-                           nSim = 1,
-                           nCores = 1,
-                           seed = 221)
-
-simDConfig = SimConfig$new(candidates = candidates_hd,
-                           nPred = 100,
-                           nObs = 60,
-                           nFolds = 10,
-                           nSim = 1,
-                           nCores = 1,
-                           seed = 221)
-
-simAResults = runSimulation(simAConfigPilot, whichNetworks=1)
