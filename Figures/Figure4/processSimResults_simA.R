@@ -4,23 +4,23 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 library(lattice)
-source("~/umass/research/networks/ensemble/Polishing/Simulations/errorMetrics.R")
+source("Simulations/errorMetrics.R")
 
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210306/20210306_erHighPrec_RealData_n_10000_p_50_simStudy.rda")
+load("Results/20211115_erHighPrec_RealData_n_10000_p_50_simStudy.rda")
 erHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210306/20210306_erLowPrec_RealData_n_10000_p_50_simStudy.rda")
+load("Results/20211115_erLowPrec_RealData_n_10000_p_50_simStudy.rda")
 erLowPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210306/20210307_wsHighPrec_RealData_n_10000_p_50_simStudy.rda")
+load("Results/20211115_wsHighPrec_RealData_n_10000_p_50_simStudy.rda")
 wsHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210306/20210306_wsLowPrec_RealData_n_10000_p_50_simStudy.rda")
+load("Results/20211115_wsLowPrec_RealData_n_10000_p_50_simStudy.rda")
 wsLowPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210306/20210306_sfHighPrec_RealData_n_10000_p_50_simStudy.rda")
+load("Results/20211115_sfHighPrec_RealData_n_10000_p_50_simStudy.rda")
 sfHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210306/20210306_sfLowPrec_RealData_n_10000_p_50_simStudy.rda")
+load("Results/20211115_sfLowPrec_RealData_n_10000_p_50_simStudy.rda")
 sfLowPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210306/20210306_hsHighPrec_RealData_n_10000_p_50_simStudy.rda")
+load("Results/20211115_hsHighPrec_RealData_n_10000_p_50_simStudy.rda")
 hsHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210306/20210306_hsLowPrec_RealData_n_10000_p_50_simStudy.rda")
+load("Results/20211115_hsLowPrec_RealData_n_10000_p_50_simStudy.rda")
 hsLowPrecResults = theseResults
 
 allResults = list(erLowPrecResults,
@@ -32,7 +32,8 @@ allResults = list(erLowPrecResults,
                   hsLowPrecResults,
                   hsHighPrecResults)
 
-load("~/umass/research/networks/ensemble/Polishing/Simulations/eightNetworksAC.rda")
+load("Results/eightNetworksAC.rda")
+eightNetworks = ac
 
 methods = c("glasso - ebic - 0", 
             "glasso - ebic - 0.5", 
@@ -58,23 +59,23 @@ for(i in 1:length(allResults))
 
 # If desired, inspect weight distributions w/boxplots
 
-par(mfrow=c(4,2))
+### par(mfrow=c(4,2))
 
-boxplot(allWeights[[1]],main="Random Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[2]],main="Random Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[1]],main="Random Graph Low Density Ensemble Weights",names = methods[1:nMod],
+###         las=2)
+### boxplot(allWeights[[2]],main="Random Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
 
-boxplot(allWeights[[3]],main="Small World Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[4]],main="Small World Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[3]],main="Small World Graph Low Density Ensemble Weights",names = methods[1:nMod],
+###         las=2)
+### boxplot(allWeights[[4]],main="Small World Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
 
-boxplot(allWeights[[5]],main="Scale Free Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[6]],main="Scale Free Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[5]],main="Scale Free Graph Low Density Ensemble Weights",names = methods[1:nMod],
+###         las=2)
+### boxplot(allWeights[[6]],main="Scale Free Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
 
-boxplot(allWeights[[7]],main="Hub-and-Spoke Graph Low Density Ensemble Weights",names = methods[1:nMod],
-      las=2)
-boxplot(allWeights[[8]],main="Hub-and-Spoke Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[7]],main="Hub-and-Spoke Graph Low Density Ensemble Weights",names = methods[1:nMod],
+###       las=2)
+### boxplot(allWeights[[8]],main="Hub-and-Spoke Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
 
 weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "erHigh"=apply(allWeights[[2]],2,mean),
@@ -86,7 +87,7 @@ weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "hsHigh"=apply(allWeights[[8]],2,mean))
 
 row.names(weightsTable) = methods[1:nMod]
-write.table(round(t(weightsTable),2),file="weights_simA.asv",sep="&",row.names=T,quote=F)
+write.table(round(t(weightsTable),2),file="Tables/weights_simA.asv",sep="&",row.names=T,quote=F)
 
 
 nSim=100
@@ -131,6 +132,35 @@ rfnLong$`mrv`= c(sapply(sapply(allResults,function(x){return(x[3])}),as.vector))
 rfnLong$`llTrain`= c(sapply(sapply(allResults,function(x){return(x[4])}),as.vector))
 rfnLong$`llTest`= c(sapply(sapply(allResults,function(x){return(x[5])}),as.vector))
 
+## Added 20210921: Extra plot of just the 4 low density for dissertation defense
+
+defense_names <- c(
+  `erdos-renyi` = "Random",
+  `small world` = "Small World",
+  `scale free` = "Scale-Free",
+  `hub and spoke`="Hub-and-Spoke"
+)
+
+p<-ggplot(rfnLong[rfnLong$density == "low density",], aes(x=method,y=`relative frobenius norm after`,fill=method)) + 
+  geom_boxplot() +
+  theme(legend.position="none",
+        axis.text.x=element_text(angle = 45, hjust = 1,size = 18),
+        axis.title.x=element_blank(),
+        axis.title.y=element_text(size=24),
+        axis.text.y=element_text(size=24),
+        strip.text.x = element_text(size = 24),
+        strip.text.y = element_text(size = 24),
+        plot.title = element_text(size = 18),
+        plot.subtitle = element_text(size = 18)) + 
+  facet_wrap(~topology,ncol=4,scales="free",labeller = as_labeller(defense_names)) +
+  labs(x="Estimation Method", 
+       y="Error (Relative Frobenius Norm)")
+       #title="Simulation A: n=10000,m=50,p=1275",
+       #subtitle="Relative Frobenius Norm")
+
+ggsave("simResults_defense.jpeg",width=20,height=8,units="in")
+## Paper figures
+
 p<-ggplot(rfnLong, aes(x=method,y=`relative frobenius norm after`,color=method)) + 
   geom_boxplot() +
   theme(legend.position="none",
@@ -148,7 +178,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`relative frobenius norm after`,color=method))
        title="Simulation A: n=10000,m=50,p=1275",
        subtitle="Relative Frobenius Norm")
 
-ggsave("simA_rfnAfter.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/Figure4/simA_rfnAfter.jpeg", plot=p,width=10,height=10,units="in")
 
 p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) + 
   geom_boxplot() +
@@ -167,7 +197,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) +
        title="Simulation A: n=10000,m=50,p=1275",
        subtitle="Matrix RV Coefficient")
 
-ggsave("simA_mrv.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/Figure4/simA_mrv.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) + 
   geom_boxplot() +
@@ -186,7 +216,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) +
        title="Simulation A: n=10000,m=50,p=1275",
        subtitle="In-sample Log Likelihood")
 
-ggsave("simA_LLTrain.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/Figure4/simA_LLTrain.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) + 
   geom_boxplot() +
@@ -205,7 +235,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) +
        title="Simulation A: n=10000,m=50,p=1275",
        subtitle="Out-of-sample Log Likelihood")
 
-ggsave("simA_LLTest.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/Figure4/simA_LLTest.jpeg", plot=p,width=10,height=10,units="in")
 
 ## Calculate sens and spec
 
@@ -222,12 +252,10 @@ rCrit = (exp(zCrit/sqrt(sampleSize-3-(P-2))*2)-1)/(exp(zCrit/sqrt(sampleSize-3-(
 
 for(l in 1:8) # topologies
 {
-  print(l)
   for(m in 1:(nMod+2)) # methods
   {
     for(k in 1:nSim)
     {
-      print(c(l,m,k))
       thres = rCrit 
       if(m == 10)
         estMat = allResults[[l]]$ensModels[[k]]$optTheta
@@ -268,8 +296,8 @@ colnames(sensMeans) = methods
 colnames(specMeans) = methods
 
 
-write.table(round(sensMeans[,c(10:11,1:9)],2),"sensMeans_simA.asv",sep="&",row.names=T)
-write.table(round(specMeans[,c(10:11,1:9)],4),"specMeans_simA.asv",sep="&",row.names=T)
+write.table(round(sensMeans[,c(10:11,1:9)],2),"Tables/sensMeans_simA.asv",sep="&",row.names=T)
+write.table(round(specMeans[,c(10:11,1:9)],4),"Tables/specMeans_simA.asv",sep="&",row.names=T)
 
 ### Binned Bias and MSE
 
@@ -364,7 +392,7 @@ p=ggplot(biasDF, aes(x=method, y=meanBias, group=category,color=method)) +
   geom_hline(yintercept=0, linetype="dashed") +
   ggtitle("Simulation A: Element-wise Bias")
   
-ggsave("simA_bias.jpeg", plot=p,width=15,height=8,units="in")
+ggsave("Figures/Figure4/simA_bias.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
 
 
 ### All the same for MSE
@@ -431,4 +459,4 @@ p=ggplot(RMSEDF, aes(x=method, y=meanRMSE, group=category,color=method)) +
   geom_hline(yintercept=0, linetype="dashed") +
   ggtitle("Simulation A: Element-wise RMSE")
 
-ggsave("simA_rmse.jpeg", plot=p,width=15,height=8,units="in")
+ggsave("Figures/Figure4/simA_rmse.jpeg", plot=p,width=15,height=8,units="in",dpi=150)

@@ -4,23 +4,23 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 library(lattice)
-source("~/umass/research/networks/ensemble/Polishing/Simulations/errorMetrics.R")
+source("Simulations/errorMetrics.R")
 
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210325/20210325_erHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("Results/20211115_erHighPrec_RealData_n_1600_p_50_simStudy.rda")
 erHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210325/20210325_erLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("Results/20211115_erLowPrec_RealData_n_1600_p_50_simStudy.rda")
 erLowPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210325/20210325_wsHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("Results/20211115_wsHighPrec_RealData_n_1600_p_50_simStudy.rda")
 wsHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210325/20210325_wsLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("Results/20211115_wsLowPrec_RealData_n_1600_p_50_simStudy.rda")
 wsLowPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210325/20210325_sfHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("Results/20211115_sfHighPrec_RealData_n_1600_p_50_simStudy.rda")
 sfHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210325/20210325_sfLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("Results/20211115_sfLowPrec_RealData_n_1600_p_50_simStudy.rda")
 sfLowPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210325/20210326_hsHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("Results/20211115_hsHighPrec_RealData_n_1600_p_50_simStudy.rda")
 hsHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210325/20210326_hsLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("Results/20211115_hsLowPrec_RealData_n_1600_p_50_simStudy.rda")
 hsLowPrecResults = theseResults
 
 allResults = list(erLowPrecResults,
@@ -35,7 +35,8 @@ allResults = list(erLowPrecResults,
 
 nPred = 50
 
-load("~/umass/research/networks/ensemble/Polishing/Simulations/eightNetworksAC.rda")
+load("Results/eightNetworksAC.rda")
+eightNetworks = ac
 
 methods = c("glasso - ebic - 0", 
             "glasso - ebic - 0.5", 
@@ -91,7 +92,7 @@ weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "hsHigh"=apply(allWeights[[8]],2,mean))
 
 row.names(weightsTable) = methods[1:nMod]
-write.table(round(t(weightsTable),2),file="weights_simB.asv",sep="&",row.names=T,quote=F)
+write.table(round(t(weightsTable),2),file="Tables/weights_simB.asv",sep="&",row.names=T,quote=F)
 
 nSim=100
 rfnLong = data.frame("topology"=c(rep("erdos-renyi",(nMod+2)*2*nSim), 
@@ -152,7 +153,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`relative frobenius norm after`,color=method))
        title="Simulation B: n=1600,m=50,p=1275",
        subtitle="Relative Frobenius Norm")
 
-ggsave("simB_rfnAfter.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/SupplementaryFigure5Figure6/simB_rfnAfter.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) + 
   geom_boxplot() +
@@ -171,7 +172,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) +
        title="Simulation B: n=1600,m=50,p=1275",
        subtitle="Matrix RV Coefficient")
 
-ggsave("simB_mrv.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/SupplementaryFigure5Figure6/simB_mrv.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) + 
   geom_boxplot() +
@@ -190,7 +191,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) +
        title="Simulation B: n=1600,m=50,p=1275",
        subtitle="In-sample Log Likelihood")
 
-ggsave("simB_LLTrain.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/SupplementaryFigure5Figure6/simB_LLTrain.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) + 
   geom_boxplot() +
@@ -209,7 +210,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) +
        title="Simulation B: n=1600,m=50,p=1275",
        subtitle="Out-of-sample Log Likelihood")
 
-ggsave("simB_LLTest.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/SupplementaryFigure5Figure6/simB_LLTest.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 ## Calculate sens and spec
 
@@ -226,12 +227,10 @@ rCrit = (exp(zCrit/sqrt(sampleSize-3-(P-2))*2)-1)/(exp(zCrit/sqrt(sampleSize-3-(
 
 for(l in 1:8) # topologies
 {
-  print(l)
   for(m in 1:(nMod+2)) # methods
   {
     for(k in 1:nSim)
     {
-      print(c(l,m,k))
       thres = rCrit 
       if(m == 10)
         estMat = allResults[[l]]$ensModels[[k]]$optTheta
@@ -272,8 +271,8 @@ row.names(sensMeans) <- row.names(specMeans) <- c(
 colnames(sensMeans) = methods
 colnames(specMeans) = methods
 
-write.table(round(sensMeans[,c(10:11,1:9)],2),"sensMeans_simB.asv",sep="&",row.names=T)
-write.table(round(specMeans[,c(10:11,1:9)],4),"specMeans_simB.asv",sep="&",row.names=T)
+write.table(round(sensMeans[,c(10:11,1:9)],2),"Tables/sensMeans_simB.asv",sep="&",row.names=T)
+write.table(round(specMeans[,c(10:11,1:9)],4),"Tables/specMeans_simB.asv",sep="&",row.names=T)
 
 ### Binned Bias and MSE
 
@@ -367,7 +366,7 @@ p=ggplot(biasDF, aes(x=method, y=meanBias, group=category,color=method)) +
   geom_hline(yintercept=0, linetype="dashed") +
   ggtitle("Simulation B: Element-wise Bias")
 
-ggsave("simB_bias.jpeg", plot=p,width=15,height=8,units="in")
+ggsave("Figures/SupplementaryFigure5Figure6/simB_bias.jpeg", plot=p,width=15,height=8,units="in",dpi = 150)
 
 
 ### All the same for MSE
@@ -434,5 +433,5 @@ p=ggplot(RMSEDF, aes(x=method, y=meanRMSE, group=category,color=method)) +
   geom_hline(yintercept=0, linetype="dashed") +
   ggtitle("Simulation B: Element-wise RMSE")
 
-ggsave("simB_rmse.jpeg", plot=p,width=15,height=8,units="in")
+ggsave("Figures/SupplementaryFigure5Figure6/simB_rmse.jpeg", plot=p,width=15,height=8,units="in",dpi = 150)
 
