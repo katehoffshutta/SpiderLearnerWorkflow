@@ -4,24 +4,24 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 library(lattice)
-source("~/umass/research/networks/ensemble/Polishing/Simulations/errorMetrics.R")
+source("Simulations/errorMetrics.R")
 
 
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210307/20210307_erHighPrec_RealData_n_60_p_100_simStudy.rda")
+load("Results/20211201_erHighPrec_RealData_n_60_p_100_simStudy.rda")
 erHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210307/20210307_erLowPrec_RealData_n_60_p_100_simStudy.rda")
+load("Results/20211201_erLowPrec_RealData_n_60_p_100_simStudy.rda")
 erLowPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210307/20210309_wsHighPrec_RealData_n_60_p_100_simStudy.rda")
+load("Results/20211203_wsHighPrec_RealData_n_60_p_100_simStudy.rda")
 wsHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210307/20210308_wsLowPrec_RealData_n_60_p_100_simStudy.rda")
+load("Results/20211201_wsLowPrec_RealData_n_60_p_100_simStudy.rda")
 wsLowPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210307/20210309_sfHighPrec_RealData_n_60_p_100_simStudy.rda")
+load("Results/20211201_sfHighPrec_RealData_n_60_p_100_simStudy.rda")
 sfHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210307/20210308_sfLowPrec_RealData_n_60_p_100_simStudy.rda")
+load("Results/20211201_sfLowPrec_RealData_n_60_p_100_simStudy.rda")
 sfLowPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210307/20210309_hsHighPrec_RealData_n_60_p_100_simStudy.rda")
+load("Results/20211203_hsHighPrec_RealData_n_60_p_100_simStudy.rda")
 hsHighPrecResults = theseResults
-load("~/umass/research/networks/ensemble/Polishing/Simulations/20210307/20210308_hsLowPrec_RealData_n_60_p_100_simStudy.rda")
+load("Results/20211201_hsLowPrec_RealData_n_60_p_100_simStudy.rda")
 hsLowPrecResults = theseResults
 
 allResults = list(erLowPrecResults,
@@ -35,7 +35,8 @@ allResults = list(erLowPrecResults,
 
 nPred = 100
 nTopology = 8
-load("~/umass/research/networks/ensemble/Polishing/Simulations/eightNetworksD.rda")
+load("Results/eightNetworksD.rda")
+eightNetworks = d
 
 methods = c("glasso - ebic - 0", 
             "glasso - ebic - 0.5", 
@@ -58,23 +59,23 @@ for(i in 1:length(allResults))
   allWeights[[i]] = t(data.frame(sapply(allResults[[i]][[1]],function(x)x$weights)))
 }         
 
-par(mfrow=c(4,2))
+### par(mfrow=c(4,2))
 
-boxplot(allWeights[[1]],main="Random Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[2]],main="Random Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[1]],main="Random Graph Low Density Ensemble Weights",names = methods[1:nMod],
+###         las=2)
+### boxplot(allWeights[[2]],main="Random Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
 
-boxplot(allWeights[[3]],main="Small World Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[4]],main="Small World Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[3]],main="Small World Graph Low Density Ensemble Weights",names = methods[1:nMod],
+###         las=2)
+### boxplot(allWeights[[4]],main="Small World Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
 
-boxplot(allWeights[[5]],main="Scale Free Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[6]],main="Scale Free Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[5]],main="Scale Free Graph Low Density Ensemble Weights",names = methods[1:nMod],
+###         las=2)
+### boxplot(allWeights[[6]],main="Scale Free Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
 
-boxplot(allWeights[[7]],main="Hub-and-Spoke Graph Low Density Ensemble Weights",names = methods[1:nMod],
-      las=2)
-boxplot(allWeights[[8]],main="Hub-and-Spoke Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[7]],main="Hub-and-Spoke Graph Low Density Ensemble Weights",names = methods[1:nMod],
+###       las=2)
+### boxplot(allWeights[[8]],main="Hub-and-Spoke Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
 
 weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "erHigh"=apply(allWeights[[2]],2,mean),
@@ -86,7 +87,7 @@ weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "hsHigh"=apply(allWeights[[8]],2,mean))
 
 row.names(weightsTable) = methods[1:nMod]
-write.table(round(t(weightsTable),2),file="weights_simD.asv",sep="&",row.names=T,quote=F)
+write.table(round(t(weightsTable),2),file="Tables/weights_simD.asv",sep="&",row.names=T,quote=F)
 
 
 nSim=100
@@ -149,7 +150,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`relative frobenius norm after`,color=method))
        title="Simulation D: n=60,m=100,p=5050",
        subtitle="Relative Frobenius Norm")
 
-ggsave("simD_rfnAfter.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/Figure4/simD_rfnAfter.jpeg", plot=p,width=10,height=10,units="in")
 
 p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) + 
   geom_boxplot() +
@@ -168,7 +169,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) +
        title="Simulation D: n=60,m=100,p=5050",
        subtitle="Matrix RV Coefficient")
 
-ggsave("simD_mrv.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/Figure4/simD_mrv.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) + 
   geom_boxplot() +
@@ -187,7 +188,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) +
        title="Simulation D: n=60,m=100,p=5050",
        subtitle="In-sample Log Likelihood")
 
-ggsave("simD_LLTrain.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/Figure4/simD_LLTrain.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) + 
   geom_boxplot() +
@@ -206,7 +207,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) +
        title="Simulation D: n=60,m=100,p=5050",
        subtitle="Out-of-sample Log Likelihood")
 
-ggsave("simD_LLTest.jpeg", plot=p,width=10,height=10,units="in")
+ggsave("Figures/Figure4/simD_LLTest.jpeg", plot=p,width=10,height=10,units="in")
 
 ## Boxplot density of each method for ebic. Is it giving us empty networks? usually.
 
@@ -280,8 +281,8 @@ colnames(sensMeans) = methods
 colnames(specMeans) = methods
 
 
-write.table(round(sensMeans[,c(9:10,1:8)],2),"sensMeans_simD.asv",sep="&",row.names=T)
-write.table(round(specMeans[,c(9:10,1:8)],4),"specMeans_simD.asv",sep="&",row.names=T)
+write.table(round(sensMeans[,c(9:10,1:8)],2),"Tables/sensMeans_simD.asv",sep="&",row.names=T)
+write.table(round(specMeans[,c(9:10,1:8)],4),"Tables/specMeans_simD.asv",sep="&",row.names=T)
 
 
 ### Binned Bias and MSE
@@ -375,7 +376,7 @@ p=ggplot(biasDF, aes(x=method, y=meanBias, group=category,color=method)) +
   geom_hline(yintercept=0, linetype="dashed") +
   ggtitle("Simulation D: Element-wise Bias")
 
-ggsave("simD_bias.jpeg", plot=p,width=15,height=8,units="in")
+ggsave("Figures/Figure4/simD_bias.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
 
 
 ### All the same for MSE
@@ -441,6 +442,6 @@ p=ggplot(RMSEDF, aes(x=method, y=meanRMSE, group=category,color=method)) +
   geom_hline(yintercept=0, linetype="dashed") +
   ggtitle("Simulation D: Element-wise RMSE")
 
-ggsave("simD_rmse.jpeg", plot=p,width=15,height=8,units="in")
+ggsave("Figures/Figure4/simD_rmse.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
 
 
