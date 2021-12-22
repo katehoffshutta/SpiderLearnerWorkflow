@@ -1,4 +1,4 @@
-"ensemble"&"simple mean"&"glasso - ebic - 0"&"glasso - ebic - 0.5"&"glasso - ric"&"hglasso"&"mle"&"glasso - stars - 0.05"&"glasso - stars - 0.1"&"qgraph - ebic - 0"&"qgraph - ebic - 0.5"
+"SpiderLearner"&"simple mean"&"glasso - ebic - 0"&"glasso - ebic - 0.5"&"glasso - ric"&"hglasso"&"mle"&"glasso - stars - 0.05"&"glasso - stars - 0.1"&"qgraph - ebic - 0"&"qgraph - ebic - 0.5"
 "erLow"&1&1&1&1&1&1&0.9214&1&1&1&1
 "erHigh"&1&1&1&1&1&1&0.9201&1&1&1&1
 "wsLow"&1&1&1&1&1&1&0.9215&1&1&1&1

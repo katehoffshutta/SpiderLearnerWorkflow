@@ -18,26 +18,30 @@ makeGoldStandardNets = function(P)
   # make random graph
   erHigh = sample_gnp(P,0.2)
   erHighDensity = length(E(erHigh))/(P*PminusOne/2)
-  erLow = sample_gnp(P,0.06)
+  erLow = sample_gnp(P,0.11)
   erLowDensity = length(E(erLow))/(P*PminusOne/2)
-  
+  print(erLowDensity)
+
   # make small world graph
   wsHigh = sample_smallworld(dim=1,size=P, nei=10, p=0.5)
   wsHighDensity = length(E(wsHigh))/(P*PminusOne/2)
   wsLow = sample_smallworld(dim=1,size=P, nei=3, p=0.5)
   wsLowDensity = length(E(wsLow))/(P*PminusOne/2)
+  print(wsLowDensity)
   
   # make scale-free graph
   sfHigh = sample_pa(n=P, power=1, m=10, directed=F)
   sfHighDensity = length(E(sfHigh))/(P*PminusOne/2)
   sfLow = sample_pa(n=P, power=1, m=3, directed=F)
   sfLowDensity = length(E(sfLow))/(P*PminusOne/2)
+  print(sfLowDensity)
   
   # make hub-and-spoke graph
   hsHigh = sample_pa(n=P, power=1.618, m=10, directed=F)
   hsHighDensity = length(E(hsHigh))/(P*PminusOne/2)
   hsLow = sample_pa(n=P, power=1.618, m=3, directed=F)
   hsLowDensity = length(E(sfLow))/(P*PminusOne/2)
+  print(hsLowDensity)
   
   #### Assign Edge Weights ####
   
@@ -100,20 +104,21 @@ makeGoldStandardNets = function(P)
 }
 
 set.seed(42)
-adjMatListCathgen = makeGoldStandardNets(100)
+adjMatListCathgen = makeGoldStandardNets(50)
 
-graphLabels = c("Random - Low Density",
+graphLabels = c("Random", # - Low Density",
                 "Random - High Density",
-                "Small World - Low Density",
+                "Small World", # - Low Density",
                 "Small World - High Density",
-                "Scale-Free - Low Density",
+                "Scale-Free", # - Low Density",
                 "Scale-Free - High Density",
-                "Hub-and-Spoke - Low Density",
+                "Hub-and-Spoke", # - Low Density",
                 "Hub-and-Spoke - High Density")
 
-pdf("graphLayouts.pdf",width=16,height=8)
-par(mfrow=c(2,4),mar=c(2,2,2,2))
-for(m in c(1,3,5,7,2,4,6,8))
+#pdf("graphLayouts.pdf",width=16,height=8)
+pdf("graphLayouts_Small.pdf",width=24,height=8)
+par(mfrow=c(1,4),mar=c(2,2,2,2))
+for(m in c(1,3,5,7)) #,2,4,6,8))
 {
   thisGraph = graph_from_adjacency_matrix(-cov2cor(as.matrix(adjMatListCathgen[[m]])),
                                           weighted=T,
@@ -124,10 +129,10 @@ for(m in c(1,3,5,7,2,4,6,8))
   myLayout = layout_with_fr(dummyGraph)
   plot(thisGraph, vertex.label=NA,
        edge.width = ifelse(abs(E(thisGraph)$weight)>0,1.5,0),
-       vertex.size = 2*(degree(thisGraph)),
-       vertex.color = rainbow(30)[degree(thisGraph)],
+       vertex.size = 1.5*(degree(thisGraph)),
+       vertex.color = rainbow(40)[degree(thisGraph)],
        layout=myLayout)
        #main = graphLabels[m])
-  title(graphLabels[m],line=0,cex.main=2)
+  title(graphLabels[m],line=-3,cex.main=3.5)
 }
 dev.off()

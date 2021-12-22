@@ -160,7 +160,8 @@ scaledVal %>% na.omit() %>% pivot_longer(cols = names(scaledVal)[1:10])  %>%
   theme(legend.position = "none",axis.text.x=element_text(angle=45,hjust=1,size=12)) +
   xlab("Method") +
   ylab("Percent Difference in Log-Likelihood from Best Model") +
-  ggtitle("External Validation on 11 Independent Datasets")
+  ggtitle("External Validation on 11 Independent Datasets") +
+  geom_jitter(width = 0.1,alpha=0.5,size=1.75)
 
 ggsave("ovarianExternalValidation.pdf")
 
@@ -173,11 +174,11 @@ scaledVal %>%
   theme(legend.position = "none",axis.text.x=element_text(angle=45,hjust=1,size=12)) +
   xlab("Method") +
   ylab("Percent Difference in Log-Likelihood from Best Model") +
-  ggtitle("External Validation on 11 Independent Datasets")
+  ggtitle("External Validation on 11 Independent Datasets") + 
+  geom_jitter(width = 0.1,alpha=0.5,size=1.75)
 
 ggsave("ovarianExternalValidationZoom.pdf")
 
-# # What is the point of doing the ensemble?
 # # We (theoretically) get a better out-of-sample likelihood
 # # Let's try sample splitting as another way to demo
 # # the utility of this method
@@ -209,31 +210,14 @@ colnames(df)[10] = "SpiderLearner"
 df$fold = 1:10
 df %>% as.data.frame  %>%
   pivot_longer(cols = 1:10)  %>%
-  ggplot(aes(x=name,y=value,fill=name)) + geom_boxplot() +
+  ggplot(aes(x=name,y=value)) + geom_boxplot() +
   theme(legend.position = "none",axis.text.x=element_text(angle=45,hjust=1,size=12)) +
   xlab("Method") +
   ylab("Out-of-sample Log Likelihood") + 
-  ggtitle("10-fold Internal Cross-Validation on Yoshihara Dataset")
+  ggtitle("10-fold Internal Cross-Validation on Yoshihara Dataset") +
+  geom_jitter(width = 0.1,alpha=0.5,size=1.75)
 
 ggsave("ooslValidation.pdf")
-
-## and what genes are most important in this network?
-
-ocGraph = graph_from_adjacency_matrix(-cov2cor(slResults$optTheta),weighted=T,mode="undirected")
-hubCentrality = hub_score(ocGraph)
-# convert weights for betweenness
-absGraph = ocGraph
-E(absGraph)$weight = 1/abs(E(ocGraph)$weight)# large magnitude of partial correlation becomes a low edge weight ie easy to travel 
-betweennessCentrality = betweenness(absGraph)
-closenessCentrality = closeness(absGraph)
-
-centralityDF = data.frame("hub" = hubCentrality$vector,
-                          "betweenness" = betweennessCentrality,
-                          "closeness" = closenessCentrality)
-
-centralityDF[order(-centralityDF$hub),][1:5,]
-centralityDF[order(-centralityDF$betweenness),][1:5,]
-centralityDF[order(-centralityDF$closeness),][1:5,]
 
 # Look at community membership
 load("ovarianSmall115.rda")
@@ -262,6 +246,7 @@ for(i in unique(factor(optThetaComm$membership)))
 }
 
 set.seed(46)
+
 myLayout= layout_with_fr(graph_from_adjacency_matrix(dummyAdjMat,diag=F,weighted=T, mode="undirected"))#, weights=NULL)
 
 jpeg("../Figures/ensembleCommunitiesWithHubs_final.jpeg",width=9,height=9,units="in",res=300)
@@ -277,125 +262,3 @@ plot(adjGraph,layout=myLayout,
      edge.color = "gray50")
 
 dev.off()
-
-# # Just one test
-# set.seed(20211213)
-# slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 2)
-# save(slResults,file="ovarianSmall115_seed_20211213.rda")
-# 
-# set.seed(12132021)
-# slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 2)
-# save(slResults,file="ovarianSmall115_seed_12132021.rda")
-# 
-# set.seed(13122021)
-# slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 2)
-# save(slResults,file="ovarianSmall115_seed_13122021.rda")
-# 
-# 
-# set.seed(2512)
-# slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 2)
-# save(slResults,file="ovarianSmall115_seed_2512.rda")
-# 
-# 
-# set.seed(25122021)
-# slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 2)
-# save(slResults,file="ovarianSmall115_seed_25122021.rda")
-# 
-# set.seed(20211225)
-# slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 2)
-# save(slResults,file="ovarianSmall115_seed_20211225.rda")
-# 
-# set.seed(1)
-# slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 2)
-# save(slResults,file="ovarianSmall115_seed_1.rda")
-# 
-# set.seed(111)
-# slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 2)
-# save(slResults,file="ovarianSmall115_seed_111.rda")
-# 
-# set.seed(11111)
-# slResults = s$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 2)
-# save(slResults,file="ovarianSmall115_seed_11111.rda")
-
-### Look at community membership for 10 reps, just to give some anecodotal idea
-### of if this is stable enough for the paper or not
-
-# 
-# findMaxModStep = function(myGraph,consider=1:10)
-# {
-#   # mygraph must have positive edges only
-#   maxModularity = -1
-#   besti = 0
-#   modularities = c()
-#   
-#   for(i in consider)
-#   {
-#     optThetaComm = cluster_walktrap(myGraph,steps = i)
-#     thisModularity = modularity(optThetaComm)
-#     modularities = c(modularities, thisModularity)
-#     if(thisModularity > maxModularity)
-#     {
-#       besti=i
-#       maxModularity = thisModularity
-#     }
-#   }
-#   return(list("maxMod"=maxModularity,"best_i"=besti,"allMod"=modularities,"all_i"=consider))
-# }
-# 
-# 
-# slResultsFiles = c("ovarianSmall115_seed_1.rda",
-#                    "ovarianSmall115_seed_111.rda",
-#                    "ovarianSmall115_seed_11111.rda",
-#                    "ovarianSmall115_seed_1213.rda",
-#                    "ovarianSmall115_seed_12132021.rda",
-#                    "ovarianSmall115_seed_13122021.rda",
-#                    "ovarianSmall115_seed_20211225.rda",
-#                    "ovarianSmall115_seed_2512.rda",
-#                    "ovarianSmall115_seed_25122021.rda")
-# 
-# for(j in 1:9)
-# {
-#   
-#   load(slResultsFiles[j])
-#   adjMat = -cov2cor(slResults$optTheta)
-#   colnames(adjMat)=colnames(lateStageSmall)
-#   adjGraph = graph_from_adjacency_matrix(adjMat,weighted=T, diag=F, mode="undirected")
-#   
-#   absGraph = adjGraph
-#   E(absGraph)$weight = abs(E(absGraph)$weight)
-#   optSteps = findMaxModStep(absGraph)$best_i
-#   optThetaComm = cluster_fast_greedy(absGraph) #cluster_walktrap(absGraph,steps = optSteps)
-#   
-#   clusterList = list()
-#   
-#   clusterList$ensemble = optThetaComm
-#   
-#   dummyAdjMat = ifelse(-cov2cor(slResults$fullModels[[6]]) == 0, 0, 1)
-#   
-#   ensembleBosses = c()
-#   for(i in unique(factor(optThetaComm$membership)))
-#   {
-#     thisComm = optThetaComm$names[which(optThetaComm$membership==i)]
-#     thisSubgraph = induced_subgraph(adjGraph,V(adjGraph)[which(colnames(lateStageSmall) %in% thisComm)])
-#     commHubs = hub_score(thisSubgraph)$vector
-#     localBoss = thisComm[which.max(commHubs)]
-#     ensembleBosses = c(ensembleBosses, localBoss)
-#   }
-#   
-#   set.seed(46)
-#   myLayout= layout_with_fr(graph_from_adjacency_matrix(dummyAdjMat,diag=F,weighted=T, mode="undirected"))#, weights=NULL)
-#   
-#   plot(adjGraph,layout=myLayout, 
-#        vertex.size=ifelse(colnames(lateStageSmall)%in%ensembleBosses,22,6),
-#        vertex.label=ifelse(colnames(lateStageSmall)%in%ensembleBosses,colnames(lateStageSmall),NA), 
-#        edge.width = 5*E(adjGraph)$weight,
-#        vertex.label.color="black",
-#        vertex.label.cex=0.8,
-#        vertex.label.dist=0,
-#        vertex.label.degree=pi/2,
-#        vertex.color=optThetaComm$membership, #ifelse(colnames(lateStageSmall)%in%ensembleBosses,"black",optThetaComm$membership),
-#        edge.color = "gray50",
-#        main = paste("ensemble",j))
-#   
-#}
-
