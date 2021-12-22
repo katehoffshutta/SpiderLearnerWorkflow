@@ -107,7 +107,6 @@ makeGoldStandardNets_simD = function(P)
   {
     print(isposdef(as.matrix(mat)))
   }
-  
   return(adjMatListRealData)
 }
 

@@ -2,12 +2,11 @@ library(ensembleGGM)
 library(foreach)
 library(doParallel)
 library(MASS)
-source("generateSimGraphs.R")
 
-set.seed(42) # this seed is ALWAYS 42
-eightNetworks = makeGoldStandardNets(50)
-
+load("../Results/eightNetworksAC.rda")
+eightNetworks = ac
 precMat = eightNetworks[[2]] # Random graph, high density
+print(dim(precMat))
 data = mvrnorm(150, mu = rep(0,nrow(precMat)), solve(precMat))
 
 s = SpiderLearner$new()
@@ -34,8 +33,8 @@ s$addCandidate(icewine)
 
 s$printLibrary()
 
-R=1 # 100
-nSimCores = 1 # 50
+R=100
+nSimCores = 50
 
 registerDoParallel(nSimCores)
 simRes = foreach(r=1:R) %dopar%

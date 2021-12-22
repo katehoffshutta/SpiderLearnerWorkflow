@@ -47,7 +47,6 @@ runSimulation = function(simConfig, whichNetworks = seq(1:8))
       
       ensModel = s$runSpiderLearner(thisSample,K=simConfig$.nFolds,standardize=FALSE,nCores=simConfig$.nCores)
       models = ensModel$fullModels
-      
       for(i in 1:M)
       {
         relFrobNormsAfter[j,i] = relativeFrobNormAfter(models[[i]], thisNetwork)

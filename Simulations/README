@@ -1,29 +1,31 @@
-Each of these files runs a simulation from the paper.
+SIMULATION R SCRIPTS
+
+Each of these R scripts runs a simulation from the paper and is called by a shell script that includes LSF parameters.
+Please look at the corresponding shell scripts; you will need to adjust if you are not running LSF.
 Note that many simulations use multiple cores; you may need to modify this for your machine. 
 
-20210304_kfold_sensitivity.R: run analysis for choosing K
-
-# DEPRECATED #
-# 20210305_runPaperSimsA.R: run Simulation A #
-# 20210307_runPaperSimsD.R: run Simulation D #
-# 20210325_runPaperSimsB.R: run Simulation B #
-# 20210326_runPaperSimsC.R: run Simulation C #
-
 simulations_A.R # requires 40 cores
+
 simulations_B.R # requires 40 cores
+
 simulations_C.R # requires 40 cores
+
+Note: Simulation D was split up into three processes so that it could be run across several different nodes at once
+because of the higher computing cost associated with the high-dimensional setting.
+
 simulations_D_a.R # requires 40 cores
 simulations_D_b.R # requires 40 cores
+simulations_D_c.R # requires 20 cores
 
-20210327_library_sensitivity.R: study library sensitivity in simulation setting
+kfoldStudy.R: study sensitivity to the number of folds k in the cross-validation # requires 50 cores
 
-20210328_ovarianDataSmall.R: study library sensitivity in ovarian cancer setting
+librarySensitivityStudy.R: study library sensitivity in simulation setting # requires 10 cores
 
-20210603_ovarianActiveSubnets.R: ovarian cancer GGM estimation, risk score development, and risk score validation
+ovarianLibraryStudy.R: study library sensitivity in ovarian cancer setting # requires 10 cores
 
-20210608_mleStudy.R: study how graph density affects the weight of the MLE in the SpiderLearner ensemble
+mleStudy.R: study how graph density affects the weight of the MLE in the SpiderLearner ensemble # requires 10 cores
 
-20210610_runtimeStudy.R: look at runtime for various n,p
+runtimeStudy.R: look at runtime for various n,p # requires 10 cores
 
 OTHER FILES
 
@@ -32,6 +34,8 @@ makeMxDist.R: shows how we made the metabolomics dataset distribution for edge w
 generateSimGraphs.R 
 
 generateSimGraphs_simD.R
+
+getBenchmarkNets.R: calls generateSimGraphs.R and generateSimGraphs_simD.R to generate the gold standard networks
 
 simulations_master.R
 
