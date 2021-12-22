@@ -1,6 +1,6 @@
 #!/bin/bash
-#BSUB -n 1
-#BSUB -W 03:59
+#BSUB -n 50
+#BSUB -W 15:59
 #BSUB -R rusage[mem=3000]
 #BSUB -R span[hosts=1]
 module load R/3.6.0
