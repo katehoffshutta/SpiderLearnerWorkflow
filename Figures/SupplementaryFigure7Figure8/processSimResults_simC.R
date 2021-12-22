@@ -46,7 +46,7 @@ methods = c("glasso - ebic - 0",
             "glasso - stars - 0.1",
             "qgraph - ebic - 0",
             "qgraph - ebic - 0.5",
-            "ensemble",
+            "SpiderLearner",
             "simple mean")
 
 
@@ -108,11 +108,11 @@ rfnLong$method = rep(c(rep("huge-ebic-0",nSim),
                        rep("stars-0.1",nSim),
                        rep("qgraph-ebic-0",nSim),
                        rep("qgraph-ebic-0.5",nSim),
-                       rep("ensemble",nSim),
+                       rep("SpiderLearner",nSim),
                        rep("simple mean",nSim)),8)
 
 rfnLong$density = factor(rfnLong$density, levels=c("low density","high density"))
-rfnLong$method = factor(rfnLong$method, levels=c("ensemble",
+rfnLong$method = factor(rfnLong$method, levels=c("SpiderLearner",
                                                  "simple mean",
                                                  "huge-ebic-0",
                                                  "huge-ebic-0.5",
@@ -227,12 +227,10 @@ rCrit = (exp(zCrit/sqrt(sampleSize-3-(P-2))*2)-1)/(exp(zCrit/sqrt(sampleSize-3-(
 
 for(l in 1:8) # topologies
 {
-  print(l)
   for(m in 1:(nMod+2)) # methods
   {
     for(k in 1:nSim)
     {
-      print(c(l,m,k))
       thres = rCrit
       if(m == 10)
         estMat = allResults[[l]]$ensModels[[k]]$optTheta
@@ -348,7 +346,7 @@ sdDF=as.data.frame.table(sdBiasArray, responseName = "sdBias")
 biasDF$sdBias = sdDF$sdBias
 names(biasDF)=c("topology","method","category","meanBias","sdBias")
 
-biasDF$method = factor(biasDF$method, levels=c("ensemble",
+biasDF$method = factor(biasDF$method, levels=c("SpiderLearner",
                                                "simple mean",
                                                "glasso - ebic - 0",
                                                "glasso - ebic - 0.5",
@@ -415,7 +413,7 @@ sdDF=as.data.frame.table(sdRMSEArray, responseName = "sdRMSE")
 RMSEDF$sdRMSE = sdDF$sdRMSE
 names(RMSEDF)=c("topology","method","category","meanRMSE","sdRMSE")
 
-RMSEDF$method = factor(RMSEDF$method, levels=c("ensemble",
+RMSEDF$method = factor(RMSEDF$method, levels=c("SpiderLearner",
                                                "simple mean",
                                                "glasso - ebic - 0",
                                                "glasso - ebic - 0.5",
@@ -433,7 +431,8 @@ p=ggplot(RMSEDF, aes(x=method, y=meanRMSE, group=category,color=method)) +
         axis.ticks.x=element_blank(),legend.position="bottom") +
   geom_pointrange(size=0.5,aes(ymin=meanRMSE-sdRMSE, ymax=meanRMSE + sdRMSE)) + 
   geom_hline(yintercept=0, linetype="dashed") +
-  ggtitle("Simulation C: Element-wise RMSE")
+  ylab("Average MSE over category elements") +
+  ggtitle("Simulation C: Element-wise MSE")
 
 ggsave("Figures/SupplementaryFigure7Figure8/simC_rmse.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
 

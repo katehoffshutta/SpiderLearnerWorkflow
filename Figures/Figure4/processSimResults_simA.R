@@ -44,11 +44,11 @@ methods = c("glasso - ebic - 0",
                       "glasso - stars - 0.1",
                       "qgraph - ebic - 0",
                       "qgraph - ebic - 0.5",
-                      "ensemble",
+                      "SpiderLearner",
                       "simple mean")
 nPred = 50
 nTopology = 8
-nMod = length(methods)-2 # number of models, not counting ensemble and simple mean
+nMod = length(methods)-2 # number of models, not counting SpiderLearner and simple mean
   
 allWeights = list()
 
@@ -61,21 +61,21 @@ for(i in 1:length(allResults))
 
 ### par(mfrow=c(4,2))
 
-### boxplot(allWeights[[1]],main="Random Graph Low Density Ensemble Weights",names = methods[1:nMod],
+### boxplot(allWeights[[1]],main="Random Graph Low Density SpiderLearner Weights",names = methods[1:nMod],
 ###         las=2)
-### boxplot(allWeights[[2]],main="Random Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[2]],main="Random Graph High Density SpiderLearner Weights",names = methods[1:nMod],las=2)
 
-### boxplot(allWeights[[3]],main="Small World Graph Low Density Ensemble Weights",names = methods[1:nMod],
+### boxplot(allWeights[[3]],main="Small World Graph Low Density SpiderLearner Weights",names = methods[1:nMod],
 ###         las=2)
-### boxplot(allWeights[[4]],main="Small World Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[4]],main="Small World Graph High Density SpiderLearner Weights",names = methods[1:nMod],las=2)
 
-### boxplot(allWeights[[5]],main="Scale Free Graph Low Density Ensemble Weights",names = methods[1:nMod],
+### boxplot(allWeights[[5]],main="Scale Free Graph Low Density SpiderLearner Weights",names = methods[1:nMod],
 ###         las=2)
-### boxplot(allWeights[[6]],main="Scale Free Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[6]],main="Scale Free Graph High Density SpiderLearner Weights",names = methods[1:nMod],las=2)
 
-### boxplot(allWeights[[7]],main="Hub-and-Spoke Graph Low Density Ensemble Weights",names = methods[1:nMod],
+### boxplot(allWeights[[7]],main="Hub-and-Spoke Graph Low Density SpiderLearner Weights",names = methods[1:nMod],
 ###       las=2)
-### boxplot(allWeights[[8]],main="Hub-and-Spoke Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[8]],main="Hub-and-Spoke Graph High Density SpiderLearner Weights",names = methods[1:nMod],las=2)
 
 weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "erHigh"=apply(allWeights[[2]],2,mean),
@@ -105,11 +105,11 @@ rfnLong$method = rep(c(rep("huge-ebic-0",nSim),
                    rep("stars-0.1",nSim),
                    rep("qgraph-ebic-0",nSim),
                    rep("qgraph-ebic-0.5",nSim),
-                   rep("ensemble",nSim),
+                   rep("SpiderLearner",nSim),
                    rep("simple mean",nSim)),8)
 
 rfnLong$density = factor(rfnLong$density, levels=c("low density","high density"))
-rfnLong$method = factor(rfnLong$method, levels=c("ensemble",
+rfnLong$method = factor(rfnLong$method, levels=c("SpiderLearner",
                                                  "simple mean",
                                                  "huge-ebic-0",
                                                  "huge-ebic-0.5",
@@ -125,7 +125,6 @@ rfnLong$topology = factor(rfnLong$topology, levels=c("erdos-renyi",
                                                      "small world",
                                                      "scale free",
                                                      "hub and spoke"))
-
 
 rfnLong$`relative frobenius norm after`= c(sapply(sapply(allResults,function(x){return(x[2])}),as.vector))
 rfnLong$`mrv`= c(sapply(sapply(allResults,function(x){return(x[3])}),as.vector))
@@ -372,7 +371,7 @@ sdDF=as.data.frame.table(sdBiasArray, responseName = "sdBias")
 biasDF$sdBias = sdDF$sdBias
 names(biasDF)=c("topology","method","category","meanBias","sdBias")
 
-biasDF$method = factor(biasDF$method, levels=c("ensemble",
+biasDF$method = factor(biasDF$method, levels=c("SpiderLearner",
                                                  "simple mean",
                                                  "glasso - ebic - 0",
                                                  "glasso - ebic - 0.5",
@@ -439,7 +438,7 @@ sdDF=as.data.frame.table(sdRMSEArray, responseName = "sdRMSE")
 RMSEDF$sdRMSE = sdDF$sdRMSE
 names(RMSEDF)=c("topology","method","category","meanRMSE","sdRMSE")
 
-RMSEDF$method = factor(RMSEDF$method, levels=c("ensemble",
+RMSEDF$method = factor(RMSEDF$method, levels=c("SpiderLearner",
                                                "simple mean",
                                                "glasso - ebic - 0",
                                                "glasso - ebic - 0.5",
@@ -457,6 +456,7 @@ p=ggplot(RMSEDF, aes(x=method, y=meanRMSE, group=category,color=method)) +
         axis.ticks.x=element_blank(),legend.position="bottom") +
   geom_pointrange(size=0.5,aes(ymin=meanRMSE-sdRMSE, ymax=meanRMSE + sdRMSE)) + 
   geom_hline(yintercept=0, linetype="dashed") +
-  ggtitle("Simulation A: Element-wise RMSE")
+  ylab("Average MSE over category elements") +
+  ggtitle("Simulation A: Element-wise MSE")
 
 ggsave("Figures/Figure4/simA_rmse.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
