@@ -1,3 +1,5 @@
+library(tidyverse)
+
 # Make Figure 4a
 
 df = read.csv("internalCVResults.csv")[-1]
@@ -45,7 +47,6 @@ ggsave("ovarianExternalValidationZoom.pdf")
 load("ocSpiderLearnerResults.rda")
 
 adjMat = -cov2cor(slResults$optTheta)
-colnames(adjMat)=colnames(lateStageSmall)
 adjGraph = graph_from_adjacency_matrix(adjMat,weighted=T, diag=F, mode="undirected")
 
 absGraph = adjGraph
@@ -60,7 +61,7 @@ ensembleBosses = c()
 for(i in unique(factor(optThetaComm$membership)))
 {
   thisComm = optThetaComm$names[which(optThetaComm$membership==i)]
-  thisSubgraph = induced_subgraph(adjGraph,V(adjGraph)[which(colnames(lateStageSmall) %in% thisComm)])
+  thisSubgraph = induced_subgraph(adjGraph,V(adjGraph)[which(colnames(adjMat) %in% thisComm)])
   commHubs = hub_score(thisSubgraph)$vector
   localBoss = thisComm[which.max(commHubs)]
   ensembleBosses = c(ensembleBosses, localBoss)
@@ -70,14 +71,14 @@ set.seed(5555)
 
 jpeg("../Figures/ensembleCommunitiesWithHubs_final.jpeg",width=9,height=9,units="in",res=300)
 plot(absGraph,layout=layout_with_fr,
-     vertex.size=ifelse(colnames(lateStageSmall)%in%ensembleBosses,22,6),
-     vertex.label=ifelse(colnames(lateStageSmall)%in%ensembleBosses,colnames(lateStageSmall),NA),
+     vertex.size=ifelse(colnames(adjMat)%in%ensembleBosses,22,6),
+     vertex.label=ifelse(colnames(adjMat)%in%ensembleBosses,colnames(adjMat),NA),
      edge.width = 5*E(absGraph)$weight,
      vertex.label.color="black",
      vertex.label.cex=0.8,
      vertex.label.dist=0,
      vertex.label.degree=pi/2,
-     vertex.color=optThetaComm$membership, #ifelse(colnames(lateStageSmall)%in%ensembleBosses,"black",optThetaComm$membership),
+     vertex.color=optThetaComm$membership,
      edge.color = "gray50")
 
 dev.off()
