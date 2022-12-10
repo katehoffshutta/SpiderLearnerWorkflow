@@ -1,13 +1,15 @@
 # This R script runs the ovarian cancer example
 # in the application section of the paper
-
+# It has been modified with the "pilot" configuration
 # You will need to install ensembleGGM using install_github:
 # library(devtools)
 # install_github("katehoffshutta/ensembleGGM")
 
 library(affy)
+library(config)
 library(ensembleGGM)
 library(tidyverse)
+config = config::get(config="pilot_application_ovarian", file="Application/config.yml")
 
 candidateNames = c("glasso-ebic-0", 
                    "glasso-ebic-0.5", 
@@ -149,7 +151,7 @@ for(d in c(2:6,8,10:15)) # skip datasets 1,7, and 9 as described in selectYoshih
   data = data.frame(validDataStd[[d]])
   data$gene = row.names(data)
   #data$gene[data$gene == "HLA.DPB1"] = "HLA-DPB1"
-  matchedData = merge(data.frame("gene"=genesToGet),data,by="gene")
+  matchedData = base::merge(data.frame("gene"=genesToGet),data,by="gene")
   mismatch = union(setdiff(genesToGet,matchedData$gene),setdiff(matchedData$gene,genesToGet))
   
   if(length(mismatch) == 0)
@@ -179,16 +181,16 @@ write.csv(scaledVal,"Figures/scaledVal.csv")
 # the utility of this method. This is "internal cross-validation"
 
 set.seed(1202)
-trainIndices = sample(rep(1:10,26))
+trainIndices = sample(rep(1:config$nFolds,260/config$nFolds))
 
-ensLoss = rep(NA,10)
-candidateLoss = matrix(rep(NA,90),nrow=10,ncol=9)
-for(k in 1:10)
+ensLoss = rep(NA,config$nFolds)
+candidateLoss = matrix(rep(NA,9*config$nFolds),nrow=config$nFolds,ncol=9)
+for(k in 1:config$nFolds)
 {
   print(paste("Working in fold:",k))
   lateStageTrain = lateStageSmall[trainIndices != k,]
   lateStageTest = lateStageSmall[trainIndices == k,]
-  slResultTrain = s$runSpiderLearner(lateStageTrain, K = 10, nCores = 5)
+  slResultTrain = s$runSpiderLearner(lateStageTrain, K = config$nFolds, nCores = config$nCores)
   ensLoss[k] = loglikLossfunction(slResultTrain$optTheta,lateStageTest)
   candidateLoss[k,] = sapply(slResultTrain$fullModels,loglikLossfunction,lateStageTest)
 }
@@ -196,7 +198,7 @@ for(k in 1:10)
 df = as.data.frame(cbind(candidateLoss,ensLoss))
 colnames(df)[1:9] = candidateNames
 colnames(df)[10] = "SpiderLearner"
-df$fold = 1:10
+df$fold = 1:config$nFolds
 
 write.csv(df,file="Figures/internalCVResults.csv")
 

@@ -8,21 +8,21 @@ library(lattice)
 setwd("~/research/repos/SpiderLearnerWorkflow/Figures/SupplementaryFigure5Figure6/")
 source("../../Simulations/errorMetrics.R")
 
-load("../../Results/SimB/20211115_erHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimB/clime/20221011_erHighPrec_RealData_n_1600_p_50_simStudy.rda")
 erHighPrecResults = theseResults
-load("../../Results/SimB/20211115_erLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimB/clime/20221011_erLowPrec_RealData_n_1600_p_50_simStudy.rda")
 erLowPrecResults = theseResults
-load("../../Results/SimB/20211115_wsHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimB/clime/20221011_wsHighPrec_RealData_n_1600_p_50_simStudy.rda")
 wsHighPrecResults = theseResults
-load("../../Results/SimB/20211115_wsLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimB/clime/20221011_wsLowPrec_RealData_n_1600_p_50_simStudy.rda")
 wsLowPrecResults = theseResults
-load("../../Results/SimB/20211115_sfHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimB/clime/20221011_sfHighPrec_RealData_n_1600_p_50_simStudy.rda")
 sfHighPrecResults = theseResults
-load("../../Results/SimB/20211115_sfLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimB/clime/20221011_sfLowPrec_RealData_n_1600_p_50_simStudy.rda")
 sfLowPrecResults = theseResults
-load("../../Results/SimB/20211115_hsHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimB/clime/20221011_hsHighPrec_RealData_n_1600_p_50_simStudy.rda")
 hsHighPrecResults = theseResults
-load("../../Results/SimB/20211115_hsLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimB/clime/20221011_hsLowPrec_RealData_n_1600_p_50_simStudy.rda")
 hsLowPrecResults = theseResults
 
 allResults = list(erLowPrecResults,
@@ -49,6 +49,7 @@ methods = c("glasso - ebic - 0",
             "glasso - stars - 0.1",
             "qgraph - ebic - 0",
             "qgraph - ebic - 0.5",
+            "clime",
             "SpiderLearner",
             "simple mean")
 
@@ -94,7 +95,7 @@ weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "hsHigh"=apply(allWeights[[8]],2,mean))
 
 row.names(weightsTable) = methods[1:nMod]
-write.table(round(t(weightsTable),2),file="../../Tables/weights_simB.asv",sep="&",row.names=T,quote=F)
+write.table(round(t(weightsTable),2),file="../../Tables/weights_simB_clime.asv",sep="&",row.names=T,quote=F)
 
 nSim=100
 rfnLong = data.frame("topology"=c(rep("erdos-renyi",(nMod+2)*2*nSim), 
@@ -111,6 +112,7 @@ rfnLong$method = rep(c(rep("huge-ebic-0",nSim),
                        rep("stars-0.1",nSim),
                        rep("qgraph-ebic-0",nSim),
                        rep("qgraph-ebic-0.5",nSim),
+                       rep("clime",nSim),
                        rep("SpiderLearner",nSim),
                        rep("simple mean",nSim)),8)
 
@@ -125,7 +127,8 @@ rfnLong$method = factor(rfnLong$method, levels=c("SpiderLearner",
                                                  "stars-0.05",
                                                  "stars-0.1",
                                                  "qgraph-ebic-0",
-                                                 "qgraph-ebic-0.5"))
+                                                 "qgraph-ebic-0.5",
+                                                 "clime"))
 
 rfnLong$topology = factor(rfnLong$topology, levels=c("erdos-renyi",
                                                      "small world",
@@ -155,7 +158,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`relative frobenius norm after`,color=method))
        title="Simulation B: n=1600,p=50,q=1275",
        subtitle="Relative Frobenius Norm")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_rfnAfter.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure5Figure6/simB_rfnAfter_clime.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) + 
   geom_boxplot() +
@@ -174,7 +177,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) +
        title="Simulation B: n=1600,p=50,q=1275",
        subtitle="Matrix RV Coefficient")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_mrv.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure5Figure6/simB_mrv_clime.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) + 
   geom_boxplot() +
@@ -193,7 +196,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) +
        title="Simulation B: n=1600,p=50,q=1275",
        subtitle="In-sample Log Likelihood")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_LLTrain.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure5Figure6/simB_LLTrain_clime.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) + 
   geom_boxplot() +
@@ -212,7 +215,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) +
        title="Simulation B: n=1600,p=50,q=1275",
        subtitle="Out-of-sample Log Likelihood")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_LLTest.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure5Figure6/simB_LLTest_clime.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 ## Calculate sens and spec
 
@@ -287,17 +290,17 @@ for(l in 1:nTopology) # topologies
   {
     for(k in 1:nSim)
     {
-      if(m==10) 
+      if(m==11) 
       {
         biasMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$optTheta - as.matrix(eightNetworks[[l]]))
         mseMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$optTheta - as.matrix(eightNetworks[[l]]))^2
       }
-      if(m==11)
+      if(m==12)
       {
         biasMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$simpleMeanNetwork - as.matrix(eightNetworks[[l]]))
         mseMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$simpleMeanNetwork - as.matrix(eightNetworks[[l]]))^2
       }
-      if(!(m==10|m==11))
+      if(!(m==11|m==12))
       {
         biasMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$fullModels[[m]] - as.matrix(eightNetworks[[l]]))
         mseMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$fullModels[[m]] - as.matrix(eightNetworks[[l]]))^2
@@ -342,7 +345,7 @@ cats = c("zeroes","small","med","large","diag")
 biasDF=as.data.frame.table(meanBiasArray, responseName = "meanBias",dnn=c(topologies,methods,cats))
 library(plyr)
 biasDF$Var1 = mapvalues(biasDF$Var1, from = c("A","B","C","D","E","F","G","H"), to = topologies)
-biasDF$Var2 = mapvalues(biasDF$Var2, from = c("A","B","C","D","E","F","G","H","I","J","K"), to = methods)
+biasDF$Var2 = mapvalues(biasDF$Var2, from = c("A","B","C","D","E","F","G","H","I","J","K","L"), to = methods)
 biasDF$Var3 = mapvalues(biasDF$Var3, from = c("A","B","C","D","E"), to = cats)
 sdDF=as.data.frame.table(sdBiasArray, responseName = "sdBias")
 biasDF$sdBias = sdDF$sdBias
@@ -368,7 +371,7 @@ p=ggplot(biasDF, aes(x=method, y=meanBias, group=category,color=method)) +
   geom_hline(yintercept=0, linetype="dashed") +
   ggtitle("Simulation B: Element-wise Bias")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_bias.jpeg", plot=p,width=15,height=8,units="in",dpi = 150)
+ggsave("../../Figures/SupplementaryFigure5Figure6/simB_bias_clime.jpeg", plot=p,width=15,height=8,units="in",dpi = 150)
 
 
 ### All the same for MSE
@@ -409,7 +412,7 @@ cats = c("zeroes","small","med","large","diag")
 RMSEDF=as.data.frame.table(meanRMSEArray, responseName = "meanRMSE",dnn=c(topologies,methods,cats))
 library(plyr)
 RMSEDF$Var1 = mapvalues(RMSEDF$Var1, from = c("A","B","C","D","E","F","G","H"), to = topologies)
-RMSEDF$Var2 = mapvalues(RMSEDF$Var2, from = c("A","B","C","D","E","F","G","H","I","J","K"), to = methods)
+RMSEDF$Var2 = mapvalues(RMSEDF$Var2, from = c("A","B","C","D","E","F","G","H","I","J","K","L"), to = methods)
 RMSEDF$Var3 = mapvalues(RMSEDF$Var3, from = c("A","B","C","D","E"), to = cats)
 sdDF=as.data.frame.table(sdRMSEArray, responseName = "sdRMSE")
 RMSEDF$sdRMSE = sdDF$sdRMSE
@@ -436,5 +439,5 @@ p=ggplot(RMSEDF, aes(x=method, y=meanRMSE, group=category,color=method)) +
   ylab("Average MSE over category elements") +
   ggtitle("Simulation B: Element-wise MSE")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_rmse.jpeg", plot=p,width=15,height=8,units="in",dpi = 150)
+ggsave("../../Figures/SupplementaryFigure5Figure6/simB_rmse_clime.jpeg", plot=p,width=15,height=8,units="in",dpi = 150)
 
