@@ -1,28 +1,28 @@
-## process simulation results
-## preliminary sims, i.e. 20201215
+## Process simulation A results to generate table and figure source for paper
+
 library(ggplot2)
 library(gridExtra)
 library(grid)
 library(lattice)
+setwd("~/research/repos/SpiderLearnerWorkflow/Figures/Figure4/")
 
-setwd("~/research/repos/SpiderLearnerWorkflow/Figures/SupplementaryFigure5Figure6/")
 source("../../Simulations/errorMetrics.R")
 
-load("../../Results/SimB/20211115_erHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimA/clime/20221011_erHighPrec_RealData_n_10000_p_50_simStudy.rda")
 erHighPrecResults = theseResults
-load("../../Results/SimB/20211115_erLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimA/clime/20221011_erLowPrec_RealData_n_10000_p_50_simStudy.rda")
 erLowPrecResults = theseResults
-load("../../Results/SimB/20211115_wsHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimA/clime/20221011_wsHighPrec_RealData_n_10000_p_50_simStudy.rda")
 wsHighPrecResults = theseResults
-load("../../Results/SimB/20211115_wsLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimA/clime/20221011_wsLowPrec_RealData_n_10000_p_50_simStudy.rda")
 wsLowPrecResults = theseResults
-load("../../Results/SimB/20211115_sfHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimA/clime/20221011_sfHighPrec_RealData_n_10000_p_50_simStudy.rda")
 sfHighPrecResults = theseResults
-load("../../Results/SimB/20211115_sfLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimA/clime/20221011_sfLowPrec_RealData_n_10000_p_50_simStudy.rda")
 sfLowPrecResults = theseResults
-load("../../Results/SimB/20211115_hsHighPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimA/clime/20221011_hsHighPrec_RealData_n_10000_p_50_simStudy.rda")
 hsHighPrecResults = theseResults
-load("../../Results/SimB/20211115_hsLowPrec_RealData_n_1600_p_50_simStudy.rda")
+load("../../Results/SimA/clime/20221011_hsLowPrec_RealData_n_10000_p_50_simStudy.rda")
 hsLowPrecResults = theseResults
 
 allResults = list(erLowPrecResults,
@@ -34,29 +34,25 @@ allResults = list(erLowPrecResults,
                   hsLowPrecResults,
                   hsHighPrecResults)
 
-
-nPred = 50
-
 load("../../Results/eightNetworksAC.rda")
 eightNetworks = ac
 
 methods = c("glasso - ebic - 0", 
             "glasso - ebic - 0.5", 
-            "glasso - ric",
-            "hglasso",
-            "mle",
-            "glasso - stars - 0.05",
-            "glasso - stars - 0.1",
-            "qgraph - ebic - 0",
-            "qgraph - ebic - 0.5",
-            "SpiderLearner",
-            "simple mean")
-
-
+                      "glasso - ric",
+                      "hglasso",
+                      "mle",
+                      "glasso - stars - 0.05",
+                      "glasso - stars - 0.1",
+                      "qgraph - ebic - 0",
+                      "qgraph - ebic - 0.5",
+                      "clime",
+                      "SpiderLearner",
+                      "simple mean")
 nPred = 50
 nTopology = 8
-nMod = length(methods)-2 # number of models
-
+nMod = length(methods)-2 # number of models, not counting SpiderLearner and simple mean
+  
 allWeights = list()
 
 for(i in 1:length(allResults))
@@ -66,23 +62,23 @@ for(i in 1:length(allResults))
 
 # If desired, inspect weight distributions w/boxplots
 
-par(mfrow=c(4,2))
+### par(mfrow=c(4,2))
 
-boxplot(allWeights[[1]],main="Random Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[2]],main="Random Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[1]],main="Random Graph Low Density SpiderLearner Weights",names = methods[1:nMod],
+###         las=2)
+### boxplot(allWeights[[2]],main="Random Graph High Density SpiderLearner Weights",names = methods[1:nMod],las=2)
 
-boxplot(allWeights[[3]],main="Small World Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[4]],main="Small World Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[3]],main="Small World Graph Low Density SpiderLearner Weights",names = methods[1:nMod],
+###         las=2)
+### boxplot(allWeights[[4]],main="Small World Graph High Density SpiderLearner Weights",names = methods[1:nMod],las=2)
 
-boxplot(allWeights[[5]],main="Scale Free Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[6]],main="Scale Free Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[5]],main="Scale Free Graph Low Density SpiderLearner Weights",names = methods[1:nMod],
+###         las=2)
+### boxplot(allWeights[[6]],main="Scale Free Graph High Density SpiderLearner Weights",names = methods[1:nMod],las=2)
 
-boxplot(allWeights[[7]],main="Hub-and-Spoke Graph Low Density Ensemble Weights",names = methods[1:nMod],
-        las=2)
-boxplot(allWeights[[8]],main="Hub-and-Spoke Graph High Density Ensemble Weights",names = methods[1:nMod],las=2)
+### boxplot(allWeights[[7]],main="Hub-and-Spoke Graph Low Density SpiderLearner Weights",names = methods[1:nMod],
+###       las=2)
+### boxplot(allWeights[[8]],main="Hub-and-Spoke Graph High Density SpiderLearner Weights",names = methods[1:nMod],las=2)
 
 weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "erHigh"=apply(allWeights[[2]],2,mean),
@@ -94,25 +90,27 @@ weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "hsHigh"=apply(allWeights[[8]],2,mean))
 
 row.names(weightsTable) = methods[1:nMod]
-write.table(round(t(weightsTable),2),file="../../Tables/weights_simB.asv",sep="&",row.names=T,quote=F)
+write.table(round(t(weightsTable),2),file="../../Tables/weights_simA_clime.asv",sep="&",row.names=T,quote=F)
 
 nSim=100
+nMod=10
 rfnLong = data.frame("topology"=c(rep("erdos-renyi",(nMod+2)*2*nSim), 
                                   rep("small world",(nMod+2)*2*nSim),
                                   rep("scale free",(nMod+2)*2*nSim),
                                   rep("hub and spoke",(nMod+2)*2*nSim)))
 rfnLong$density = rep(c(rep("low density",(nMod+2)*nSim),rep("high density",(nMod+2)*nSim)),4)
 rfnLong$method = rep(c(rep("huge-ebic-0",nSim),
-                       rep("huge-ebic-0.5",nSim),
-                       rep("glasso-ric",nSim),
-                       rep("hub glasso",nSim),
-                       rep("mle",nSim),
-                       rep("stars-0.05",nSim),
-                       rep("stars-0.1",nSim),
-                       rep("qgraph-ebic-0",nSim),
-                       rep("qgraph-ebic-0.5",nSim),
-                       rep("SpiderLearner",nSim),
-                       rep("simple mean",nSim)),8)
+                   rep("huge-ebic-0.5",nSim),
+                   rep("glasso-ric",nSim),
+                   rep("hub glasso",nSim),
+                   rep("mle",nSim),
+                   rep("stars-0.05",nSim),
+                   rep("stars-0.1",nSim),
+                   rep("qgraph-ebic-0",nSim),
+                   rep("qgraph-ebic-0.5",nSim),
+                   rep("clime",nSim),
+                   rep("SpiderLearner",nSim),
+                   rep("simple mean",nSim)),8)
 
 rfnLong$density = factor(rfnLong$density, levels=c("low density","high density"))
 rfnLong$method = factor(rfnLong$method, levels=c("SpiderLearner",
@@ -125,18 +123,47 @@ rfnLong$method = factor(rfnLong$method, levels=c("SpiderLearner",
                                                  "stars-0.05",
                                                  "stars-0.1",
                                                  "qgraph-ebic-0",
-                                                 "qgraph-ebic-0.5"))
+                                                 "qgraph-ebic-0.5",
+                                                 "clime"))
 
 rfnLong$topology = factor(rfnLong$topology, levels=c("erdos-renyi",
                                                      "small world",
                                                      "scale free",
                                                      "hub and spoke"))
 
-
 rfnLong$`relative frobenius norm after`= c(sapply(sapply(allResults,function(x){return(x[2])}),as.vector))
 rfnLong$`mrv`= c(sapply(sapply(allResults,function(x){return(x[3])}),as.vector))
 rfnLong$`llTrain`= c(sapply(sapply(allResults,function(x){return(x[4])}),as.vector))
 rfnLong$`llTest`= c(sapply(sapply(allResults,function(x){return(x[5])}),as.vector))
+
+## Added 20210921: Extra plot of just the 4 low density for dissertation defense
+
+defense_names <- c(
+  `erdos-renyi` = "Random",
+  `small world` = "Small World",
+  `scale free` = "Scale-Free",
+  `hub and spoke`="Hub-and-Spoke"
+)
+
+p<-ggplot(rfnLong[rfnLong$density == "low density",], aes(x=method,y=`relative frobenius norm after`,fill=method)) + 
+  geom_boxplot() +
+  theme(legend.position="none",
+        axis.text.x=element_text(angle = 45, hjust = 1,size = 18),
+        axis.title.x=element_blank(),
+        axis.title.y=element_text(size=24),
+        axis.text.y=element_text(size=24),
+        strip.text.x = element_text(size = 24),
+        strip.text.y = element_text(size = 24),
+        plot.title = element_text(size = 18),
+        plot.subtitle = element_text(size = 18)) + 
+  facet_wrap(~topology,ncol=4,scales="free",labeller = as_labeller(defense_names)) +
+  labs(x="Estimation Method", 
+       y="Error (Relative Frobenius Norm)")
+       #title="Simulation A: n=10000,p=50,q=1275",
+       #subtitle="Relative Frobenius Norm")
+
+ggsave("simResults_defense_clime.jpeg",width=20,height=8,units="in")
+## Paper figures
 
 p<-ggplot(rfnLong, aes(x=method,y=`relative frobenius norm after`,color=method)) + 
   geom_boxplot() +
@@ -144,7 +171,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`relative frobenius norm after`,color=method))
         axis.text.x=element_text(angle = -90, hjust = 0,size = 18),
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
-        axis.text.y=element_text(size=14),
+        axis.text.y=element_text(size=18),
         strip.text.x = element_text(size = 18),
         strip.text.y = element_text(size = 18),
         plot.title = element_text(size = 18),
@@ -152,10 +179,10 @@ p<-ggplot(rfnLong, aes(x=method,y=`relative frobenius norm after`,color=method))
   facet_grid(topology ~ density, scales = "free_y") +
   labs(x="Estimation Method", 
        y="Relative Frobenius Norm",
-       title="Simulation B: n=1600,p=50,q=1275",
+       title="Simulation A: n=10000,p=50,q=1275",
        subtitle="Relative Frobenius Norm")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_rfnAfter.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/Figure4/simA_rfnAfter_clime.jpeg", plot=p,width=10,height=10,units="in")
 
 p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) + 
   geom_boxplot() +
@@ -163,7 +190,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) +
         axis.text.x=element_text(angle = -90, hjust = 0,size = 18),
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
-        axis.text.y=element_text(size=14),
+        axis.text.y=element_text(size=18),
         strip.text.x = element_text(size = 18),
         strip.text.y = element_text(size = 18),
         plot.title = element_text(size = 18),
@@ -171,10 +198,10 @@ p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) +
   facet_grid(topology ~ density, scales = "free_y") +
   labs(x="Estimation Method", 
        y="Matrix RV Coefficient",
-       title="Simulation B: n=1600,p=50,q=1275",
+       title="Simulation A: n=10000,p=50,q=1275",
        subtitle="Matrix RV Coefficient")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_mrv.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/Figure4/simA_mrv_clime.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) + 
   geom_boxplot() +
@@ -182,7 +209,7 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) +
         axis.text.x=element_text(angle = -90, hjust = 0,size = 18),
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
-        axis.text.y=element_text(size=14),
+        axis.text.y=element_text(size=18),
         strip.text.x = element_text(size = 18),
         strip.text.y = element_text(size = 18),
         plot.title = element_text(size = 18),
@@ -190,10 +217,10 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) +
   facet_grid(topology ~ density, scales = "free_y") +
   labs(x="Estimation Method", 
        y="In-sample Log Likelihood",
-       title="Simulation B: n=1600,p=50,q=1275",
+       title="Simulation A: n=10000,p=50,q=1275",
        subtitle="In-sample Log Likelihood")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_LLTrain.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/Figure4/simA_LLTrain_clime.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) + 
   geom_boxplot() +
@@ -202,17 +229,17 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) +
         axis.text.x=element_text(angle = -90, hjust = 0,size = 18),
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
-        axis.text.y=element_text(size=14),
+        axis.text.y=element_text(size=18),
         strip.text.x = element_text(size = 18),
         strip.text.y = element_text(size = 18),
         plot.title = element_text(size = 18),
         plot.subtitle = element_text(size = 18)) + 
   labs(x="Estimation Method", 
        y="Out-of-sample Log Likelihood",
-       title="Simulation B: n=1600,p=50,q=1275",
+       title="Simulation A: n=10000,p=50,q=1275",
        subtitle="Out-of-sample Log Likelihood")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_LLTest.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/Figure4/simA_LLTest_clime.jpeg", plot=p,width=10,height=10,units="in")
 
 ## Calculate sens and spec
 
@@ -222,7 +249,7 @@ fpArray = array(rep(NA, 8*(nMod+2)*nSim),dim=c(8,(nMod+2),nSim))
 tnArray = array(rep(NA, 8*(nMod+2)*nSim),dim=c(8,(nMod+2),nSim))
 fnArray = array(rep(NA, 8*(nMod+2)*nSim),dim=c(8,(nMod+2),nSim))
 
-sampleSize = 1600
+sampleSize = 10000
 P=50
 zCrit = qnorm(1-0.05/(P^2))
 rCrit = (exp(zCrit/sqrt(sampleSize-3-(P-2))*2)-1)/(exp(zCrit/sqrt(sampleSize-3-(P-2))*2)+1)
@@ -254,7 +281,6 @@ for(l in 1:8) # topologies
   }
 }
 
-
 sensArray = tpArray/(tpArray + fnArray)
 specArray = tnArray/(fpArray + tnArray)
 sensMeans = apply(sensArray,c(1,2),mean)
@@ -273,10 +299,12 @@ row.names(sensMeans) <- row.names(specMeans) <- c(
 colnames(sensMeans) = methods
 colnames(specMeans) = methods
 
-write.table(round(sensMeans[,c(10:11,1:9)],2),"../../Tables/sensMeans_simB.asv",sep="&",row.names=T)
-write.table(round(specMeans[,c(10:11,1:9)],4),"../../Tables/specMeans_simB.asv",sep="&",row.names=T)
+
+write.table(round(sensMeans[,c(10:11,1:9)],2),"../../Tables/sensMeans_simA.asv",sep="&",row.names=T)
+write.table(round(specMeans[,c(10:11,1:9)],4),"../../Tables/specMeans_simA.asv",sep="&",row.names=T)
 
 ### Binned Bias and MSE
+
 
 biasMat = array(rep(NA,nTopology*(nMod+2)*nSim*nPred*nPred),dim=c(nTopology,(nMod+2),nSim,nPred,nPred))
 mseMat = array(rep(NA,nTopology*(nMod+2)*nSim*nPred*nPred),dim=c(nTopology,(nMod+2),nSim,nPred,nPred))
@@ -299,8 +327,8 @@ for(l in 1:nTopology) # topologies
       }
       if(!(m==10|m==11))
       {
-        biasMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$fullModels[[m]] - as.matrix(eightNetworks[[l]]))
-        mseMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$fullModels[[m]] - as.matrix(eightNetworks[[l]]))^2
+          biasMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$fullModels[[m]] - as.matrix(eightNetworks[[l]]))
+          mseMat[l,m,k,,] = (allResults[[l]]$ensModels[[k]]$fullModels[[m]] - as.matrix(eightNetworks[[l]]))^2
       }
     }
   }
@@ -349,16 +377,16 @@ biasDF$sdBias = sdDF$sdBias
 names(biasDF)=c("topology","method","category","meanBias","sdBias")
 
 biasDF$method = factor(biasDF$method, levels=c("SpiderLearner",
-                                               "simple mean",
-                                               "glasso - ebic - 0",
-                                               "glasso - ebic - 0.5",
-                                               "glasso - ric",
-                                               "hglasso",
-                                               "mle",
-                                               "glasso - stars - 0.05",
-                                               "glasso - stars - 0.1",
-                                               "qgraph - ebic - 0",
-                                               "qgraph - ebic - 0.5"))
+                                                 "simple mean",
+                                                 "glasso - ebic - 0",
+                                                 "glasso - ebic - 0.5",
+                                                 "glasso - ric",
+                                                 "hglasso",
+                                                 "mle",
+                                                 "glasso - stars - 0.05",
+                                                 "glasso - stars - 0.1",
+                                                 "qgraph - ebic - 0",
+                                                 "qgraph - ebic - 0.5"))
 p=ggplot(biasDF, aes(x=method, y=meanBias, group=category,color=method)) + 
   facet_grid(category ~ topology,scales="free_y") +
   theme(axis.title.x=element_blank(),
@@ -366,9 +394,9 @@ p=ggplot(biasDF, aes(x=method, y=meanBias, group=category,color=method)) +
         axis.ticks.x=element_blank(),legend.position="bottom") +
   geom_pointrange(size=0.5,aes(ymin=meanBias-sdBias, ymax=meanBias + sdBias)) + 
   geom_hline(yintercept=0, linetype="dashed") +
-  ggtitle("Simulation B: Element-wise Bias")
-
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_bias.jpeg", plot=p,width=15,height=8,units="in",dpi = 150)
+  ggtitle("Simulation A: Element-wise Bias")
+  
+ggsave("../../Figures/Figure4/simA_bias_clime.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
 
 
 ### All the same for MSE
@@ -434,7 +462,6 @@ p=ggplot(RMSEDF, aes(x=method, y=meanRMSE, group=category,color=method)) +
   geom_pointrange(size=0.5,aes(ymin=meanRMSE-sdRMSE, ymax=meanRMSE + sdRMSE)) + 
   geom_hline(yintercept=0, linetype="dashed") +
   ylab("Average MSE over category elements") +
-  ggtitle("Simulation B: Element-wise MSE")
+  ggtitle("Simulation A: Element-wise MSE")
 
-ggsave("../../Figures/SupplementaryFigure5Figure6/simB_rmse.jpeg", plot=p,width=15,height=8,units="in",dpi = 150)
-
+ggsave("../../Figures/Figure4/simA_rmse_clime.jpeg", plot=p,width=15,height=8,units="in",dpi=150)

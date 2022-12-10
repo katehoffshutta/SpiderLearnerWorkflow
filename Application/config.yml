@@ -1,0 +1,7 @@
+default:
+  nFolds: 10
+  nCores: 5
+
+pilot_application_ovarian:
+  nFolds: 3
+  nCores: 2

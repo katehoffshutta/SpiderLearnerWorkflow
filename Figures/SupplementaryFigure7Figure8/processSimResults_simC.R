@@ -4,23 +4,25 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 library(lattice)
-source("Simulations/errorMetrics.R")
 
-load("Results/20211115_erHighPrec_RealData_n_100_p_50_simStudy.rda")
+setwd("~/research/repos/SpiderLearnerWorkflow/Figures/SupplementaryFigure7Figure8/")
+source("../../Simulations/errorMetrics.R")
+
+load("../../Results/SimC/20211115_erHighPrec_RealData_n_100_p_50_simStudy.rda")
 erHighPrecResults = theseResults
-load("Results/20211115_erLowPrec_RealData_n_100_p_50_simStudy.rda")
+load("../../Results/SimC/20211115_erLowPrec_RealData_n_100_p_50_simStudy.rda")
 erLowPrecResults = theseResults
-load("Results/20211115_wsHighPrec_RealData_n_100_p_50_simStudy.rda")
+load("../../Results/SimC/20211115_wsHighPrec_RealData_n_100_p_50_simStudy.rda")
 wsHighPrecResults = theseResults
-load("Results/20211115_wsLowPrec_RealData_n_100_p_50_simStudy.rda")
+load("../../Results/SimC/20211115_wsLowPrec_RealData_n_100_p_50_simStudy.rda")
 wsLowPrecResults = theseResults
-load("Results/20211115_sfHighPrec_RealData_n_100_p_50_simStudy.rda")
+load("../../Results/SimC/20211115_sfHighPrec_RealData_n_100_p_50_simStudy.rda")
 sfHighPrecResults = theseResults
-load("Results/20211115_sfLowPrec_RealData_n_100_p_50_simStudy.rda")
+load("../../Results/SimC/20211115_sfLowPrec_RealData_n_100_p_50_simStudy.rda")
 sfLowPrecResults = theseResults
-load("Results/20211115_hsHighPrec_RealData_n_100_p_50_simStudy.rda")
+load("../../Results/SimC/20211115_hsHighPrec_RealData_n_100_p_50_simStudy.rda")
 hsHighPrecResults = theseResults
-load("Results/20211115_hsLowPrec_RealData_n_100_p_50_simStudy.rda")
+load("../../Results/SimC/20211115_hsLowPrec_RealData_n_100_p_50_simStudy.rda")
 hsLowPrecResults = theseResults
 
 allResults = list(erLowPrecResults,
@@ -34,7 +36,7 @@ allResults = list(erLowPrecResults,
 
 nPred = 50
 
-load("Results/eightNetworksAC.rda")
+load("../../Results/eightNetworksAC.rda")
 eightNetworks = ac
 
 methods = c("glasso - ebic - 0", 
@@ -91,7 +93,7 @@ weightsTable = data.frame("erLow"=apply(allWeights[[1]],2,mean),
                           "hsHigh"=apply(allWeights[[8]],2,mean))
 
 row.names(weightsTable) = methods[1:nMod]
-write.table(round(t(weightsTable),2),file="Tables/weights_simC.asv",sep="&",row.names=T,quote=F)
+write.table(round(t(weightsTable),2),file="../../Tables/weights_simC.asv",sep="&",row.names=T,quote=F)
 
 nSim=100
 rfnLong = data.frame("topology"=c(rep("erdos-renyi",(nMod+2)*2*nSim), 
@@ -150,10 +152,10 @@ p<-ggplot(rfnLong, aes(x=method,y=`relative frobenius norm after`,color=method))
   facet_grid(topology ~ density) + #, scales = "free_y") +
   labs(x="Estimation Method", 
        y="Relative Frobenius Norm",
-       title="Simulation C: n=100,m=50,p=1275",
+       title="Simulation C: n=100,p=50,q=1275",
        subtitle="Relative Frobenius Norm")
 
-ggsave("Figures/SupplementaryFigure7Figure8/simC_rfnAfter.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure7Figure8/simC_rfnAfter.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) + 
   geom_boxplot() +
@@ -169,10 +171,10 @@ p<-ggplot(rfnLong, aes(x=method,y=`mrv`,color=method)) +
   facet_grid(topology ~ density, scales = "free_y") +
   labs(x="Estimation Method", 
        y="Matrix RV Coefficient",
-       title="Simulation C: n=100,m=50,p=1275",
+       title="Simulation C: n=100,p=50,q=1275",
        subtitle="Matrix RV Coefficient")
 
-ggsave("Figures/SupplementaryFigure7Figure8/simC_mrv.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure7Figure8/simC_mrv.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) + 
   geom_boxplot() +
@@ -188,10 +190,10 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTrain`,color=method)) +
   facet_grid(topology ~ density, scales = "free_y") +
   labs(x="Estimation Method", 
        y="In-sample Log Likelihood",
-       title="Simulation C: n=100,m=50,p=1275",
+       title="Simulation C: n=100,p=50,q=1275",
        subtitle="In-sample Log Likelihood")
 
-ggsave("Figures/SupplementaryFigure7Figure8/simC_LLTrain.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure7Figure8/simC_LLTrain.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) + 
   geom_boxplot() +
@@ -207,10 +209,10 @@ p<-ggplot(rfnLong, aes(x=method,y=`llTest`,color=method)) +
         plot.subtitle = element_text(size = 18)) + 
   labs(x="Estimation Method", 
        y="Out-of-sample Log Likelihood",
-       title="Simulation C: n=100,m=50,p=1275",
+       title="Simulation C: n=100,p=50,q=1275",
        subtitle="Out-of-sample Log Likelihood")
 
-ggsave("Figures/SupplementaryFigure7Figure8/simC_LLTest.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure7Figure8/simC_LLTest.jpeg", plot=p,width=10,height=10,units="in",dpi=150)
 
 ## Calculate sens and spec
 
@@ -271,8 +273,8 @@ row.names(sensMeans) <- row.names(specMeans) <- c(
 colnames(sensMeans) = methods
 colnames(specMeans) = methods
 
-write.table(round(sensMeans[,c(10:11,1:9)],2),"Tables/sensMeans_simC.asv",sep="&",row.names=T)
-write.table(round(specMeans[,c(10:11,1:9)],4),"Tables/specMeans_simC.asv",sep="&",row.names=T)
+write.table(round(sensMeans[,c(10:11,1:9)],2),"../../Tables/sensMeans_simC.asv",sep="&",row.names=T)
+write.table(round(specMeans[,c(10:11,1:9)],4),"../../Tables/specMeans_simC.asv",sep="&",row.names=T)
 
 ### Binned Bias and MSE
 
@@ -366,7 +368,7 @@ p=ggplot(biasDF, aes(x=method, y=meanBias, group=category,color=method)) +
   geom_hline(yintercept=0, linetype="dashed") +
   ggtitle("Simulation C: Element-wise Bias")
 
-ggsave("Figures/SupplementaryFigure7Figure8/simC_bias.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure7Figure8/simC_bias.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
 
 
 ### All the same for MSE
@@ -434,5 +436,5 @@ p=ggplot(RMSEDF, aes(x=method, y=meanRMSE, group=category,color=method)) +
   ylab("Average MSE over category elements") +
   ggtitle("Simulation C: Element-wise MSE")
 
-ggsave("Figures/SupplementaryFigure7Figure8/simC_rmse.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
+ggsave("../../Figures/SupplementaryFigure7Figure8/simC_rmse.jpeg", plot=p,width=15,height=8,units="in",dpi=150)
 
