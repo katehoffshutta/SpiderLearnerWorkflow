@@ -1,9 +1,13 @@
 library(affy)
+library(config)
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 #BiocManager::install("curatedOvarianData")
 library(curatedOvarianData)
 library(ensembleGGM)
+
+config = config::get(config="pilot_sim_ovarian_library", file="Simulations/config.yml")
+print(config)
 
 standardize = function(x){return((x-mean(x))/sd(x))}
 
@@ -69,13 +73,13 @@ for(candidate in candidates_4)
 
 set.seed(1222)
 
-slResults1 = s1$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 10)
-slResults2 = s2$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 10)
-slResults3 = s3$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 10)
-slResults4 = s4$runSpiderLearner(lateStageSmall, K = 10, standardize=T, nCores = 10)
+slResults1 = s1$runSpiderLearner(lateStageSmall, K = config$nFolds, standardize=T, nCores = config$nCores)
+slResults2 = s2$runSpiderLearner(lateStageSmall, K = config$nFolds, standardize=T, nCores = config$nCores)
+slResults3 = s3$runSpiderLearner(lateStageSmall, K = config$nFolds, standardize=T, nCores = config$nCores)
+slResults4 = s4$runSpiderLearner(lateStageSmall, K = config$nFolds, standardize=T, nCores = config$nCores)
 
 slResults = list(slResults1, slResults2, slResults3, slResults4)
 
-save(slResults,file="ovarianLibraryExample.rda")
+save(slResults,file="Results/Pilot/ovarianLibraryExample.rda")
 
 

@@ -1,3 +1,4 @@
+library(config)
 library(ggplot2)
 library(huge)
 library(igraph)
@@ -5,6 +6,8 @@ library(MASS)
 library(moments)
 library(pracma)
 library(ensembleGGM)
+
+config = config::get(config="pilot_sim_bounded_loss", file="Simulations/config.yml")
 
 standardize = function(x){return((x-mean(x))/sd(x))}
 sampleNetworkData = function(N, covMat)
@@ -28,7 +31,7 @@ boost = function(myMatrix)
 
 #### Get discrete uniform distribution from REALDATA Example ####
 
-realDataHist = read.csv("mxDist.csv")
+realDataHist = read.csv("Simulations/mxDist.csv")
 
 #### Make Gold Standard Network Structures #### 
 
@@ -87,7 +90,8 @@ for(candidate in candidates)
   s$addCandidate(candidate)
 }
 
-nIt = 30
+nIt = config$nSim
+nFolds = config$nFolds
 
 ensModelWeightsUnbd = matrix(rep(NA,nIt*length(candidates)),ncol=length(candidates))
 ensModelWeightsBd = matrix(rep(NA,nIt*length(candidates)),ncol=length(candidates))
@@ -100,11 +104,11 @@ for(N in 1:nIt)
 
   thisSample = sampleNetworkData(N=nObs,covMat=adjCov)
   thisTestSample = sampleNetworkData(N=nObs,covMat=adjCov)
-  ensModel = s$runSpiderLearner(thisSample,10,standardize=FALSE,boundedLoss= F)
+  ensModel = s$runSpiderLearner(thisSample,nFolds,standardize=FALSE,boundedLoss= F)
   ensModelWeightsUnbd[N,] = ensModel$weights
-  ensModel = s$runSpiderLearner(thisSample,10,standardize=FALSE,boundedLoss= T)
+  ensModel = s$runSpiderLearner(thisSample,nFolds,standardize=FALSE,boundedLoss= T)
   ensModelWeightsBd[N,] = ensModel$weights
 }
 
-write.csv(ensModelWeightsUnbd,file="ensModelWeightsUnbd.csv",row.names=F,quote=F)
-write.csv(ensModelWeightsBd,file="ensModelWeightsBd.csv",row.names=F,quote=F)
+write.csv(ensModelWeightsUnbd,file="Results/Pilot/ensModelWeightsUnbd.csv",row.names=F,quote=F)
+write.csv(ensModelWeightsBd,file="Results/Pilot/ensModelWeightsBd.csv",row.names=F,quote=F)

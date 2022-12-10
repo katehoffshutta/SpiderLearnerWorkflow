@@ -1,0 +1,72 @@
+default:
+  seed: 221
+
+pilot_sim_abc:
+  candidates: "candidates_ld"
+  nSim: 2
+  nCoresInner: 1
+  nCoresOuter: 4
+  nFolds: 2
+  seed: 221
+  
+pilot_sim_d:
+  candidates: "candidates_hd"
+  nSim: 2
+  nCoresInner: 1
+  nCoresOuter: 4
+  nFolds: 2
+  seed: 221
+
+pilot_sim_bootstrap:
+  nSim: 2
+  nFolds: 2
+  nBoot: 2
+  nCores: 2
+
+pilot_sim_bounded_loss:
+  nSim: 2
+  nFolds: 2
+
+pilot_sim_kfold:
+  nSim: 2
+  nSimCores: 2
+
+pilot_sim_library:
+  nSim: 2
+  nFolds: 2
+  nCores: 2
+
+pilot_sim_mle:
+  nSim: 2
+  nFolds: 2
+  nCores: 2
+
+pilot_sim_ovarian_library:
+  nFolds: 2
+  nCores: 1
+
+pilot_sim_runtime:
+  nFolds: 2
+  nCores: 2
+
+pilot_sim_numerical_optimization:
+  nFolds: 2
+  nCores: 1
+
+
+pilot_sim_abc_clime:
+  candidates: "candidates_ld_clime"
+  nSim: 2
+  nCoresInner: 1
+  nCoresOuter: 4
+  nFolds: 2
+  seed: 221
+  
+pilot_sim_d_clime:
+  candidates: "candidates_hd_clime"
+  nSim: 2
+  nCoresInner: 1
+  nCoresOuter: 4
+  nFolds: 2
+  seed: 221
+

@@ -1,8 +1,12 @@
+library(config)
 library(ensembleGGM)
 library(igraph)
 library(pracma)
 library(MASS)
-source("errorMetrics.R")
+source("Simulations/errorMetrics.R")
+
+config = config::get(config="pilot_sim_mle", file="Simulations/config.yml")
+print(config)
 
 standardize = function(x){return((x-mean(x))/sd(x))}
 sampleNetworkData = function(N, covMat)
@@ -24,7 +28,7 @@ boost = function(myMatrix)
     return(myMatrix)
 }
 
-realDataHist = read.csv("mxDist.csv")
+realDataHist = read.csv("Simulations/mxDist.csv")
 
 #### Make Gold Standard Network Structures #### 
 
@@ -104,7 +108,7 @@ candidates = list(apple,
 
 s = MakeSpiderLearner(candidates)
 
-nIt = 30
+nIt = config$nSim
 
 ensModelWeights = array(rep(NA,nIt*length(sparseAdjMats)*length(candidates)),dim=c(nIt,length(sparseAdjMats),length(candidates)))
 
@@ -117,12 +121,12 @@ for(N in 1:nIt)
     thisNetwork = sparseAdjMats[[i]]
     thisSample = sampleNetworkData(N=nObs,covMat=solve(thisNetwork))
     thisTestSample = sampleNetworkData(N=nObs,covMat=solve(thisNetwork))
-    ensModel = s$runSpiderLearner(thisSample,10,standardize=FALSE,nCores = 10)
+    ensModel = s$runSpiderLearner(thisSample,config$nFolds,standardize=FALSE,config$nCores)
     ensModelWeights[N,i,] = ensModel$weights
   }
 }
 
-save(ensModelWeights,file="mleWeights_pkg.rda")
+save(ensModelWeights,file="Results/Pilot/mleWeights_pkg.rda")
 
 # 
 # sparsityVec = c(0.05,0.10,0.25,0.5,0.75,1)

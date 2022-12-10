@@ -58,7 +58,7 @@ makeGoldStandardNets = function(P)
     return(list(graph, precMat))
   }
   
-  realDataHist = read.csv("mxDist.csv")
+  realDataHist = read.csv("Simulations/mxDist.csv")
 
   erHighRealData = assignRealDataEdgeWeights(erHigh,ehist=realDataHist)
   erLowRealData = assignRealDataEdgeWeights(erLow,ehist=realDataHist)

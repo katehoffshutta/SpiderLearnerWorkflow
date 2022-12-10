@@ -1,9 +1,13 @@
+library(config)
 library(ensembleGGM)
 library(foreach)
 library(doParallel)
 library(MASS)
 
-load("../Results/eightNetworksAC.rda")
+# read in config parameters from config file
+config = config::get(config="pilot_sim_kfold", file="Simulations/config.yml")
+
+load("Results/eightNetworksAC.rda")
 eightNetworks = ac
 precMat = eightNetworks[[2]] # Random graph, high density
 print(dim(precMat))
@@ -33,8 +37,8 @@ s$addCandidate(icewine)
 
 s$printLibrary()
 
-R=100
-nSimCores = 50
+R=config$nSim
+nSimCores = config$nSimCores
 
 registerDoParallel(nSimCores)
 simRes = foreach(r=1:R) %dopar%
@@ -61,4 +65,4 @@ simRes = foreach(r=1:R) %dopar%
 
 stopImplicitCluster()
 
-save(simRes,file="k_fold_sim.rda")
+save(simRes,file="Results/Pilot/k_fold_sim.rda")

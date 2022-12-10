@@ -1,6 +1,7 @@
-load("transfer/eightNetworksAC.rda")
+library(MASS)
+load("Results/eightNetworksAC.rda")
 
-precMat = eightNetworks[[2]]
+precMat = ac[[2]]
 
 load("bootstrap/simRes_er_50.rda")
 simResA= simRes
@@ -16,7 +17,7 @@ for(i in 51:100)
 
 # get standard deviation
 
-R=100
+R=2
 k2 = array(rep(NA,R*50*50),dim=c(R,50,50))
 k5 = array(rep(NA,R*50*50),dim=c(R,50,50))
 k10 = array(rep(NA,R*50*50),dim=c(R,50,50))
@@ -24,6 +25,7 @@ k15 = array(rep(NA,R*50*50),dim=c(R,50,50))
 k20 = array(rep(NA,R*50*50),dim=c(R,50,50))
 k30 = array(rep(NA,R*50*50),dim=c(R,50,50))
 
+R=2
 for(r in 1:R)
 {
   k2[r,,] = simRes[[r]][[1]]$optTheta

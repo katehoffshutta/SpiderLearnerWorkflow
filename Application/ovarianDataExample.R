@@ -42,7 +42,7 @@ standardize = function(x){return((x-mean(x))/sd(x))}
 
 data(GSE32062.GPL6480_eset)
 lateStage = exprs(GSE32062.GPL6480_eset)
-yoshi = read.table("yoshiharaLimitedGeneSet.tsv",sep="&")
+yoshi = read.table("Application/yoshiharaLimitedGeneSet.tsv",sep="\t", skip = 1)
 lateStageSubset = lateStage[which(rownames(lateStage)%in%yoshi[,1]),]
 lateStageSmall = apply(data.frame(t(lateStageSubset)),2,standardize)
 #colnames(lateStageSmall)[which(colnames(lateStageSmall)=="HLA-DPB1")] = "HLA.DPB1"
@@ -83,9 +83,9 @@ for(candidate in candidates)
 #                               standardize=T, 
 #                               nCores = 10)
 
-#save(slResults,file="../Figures/ocSpiderLearnerResults.rda")
+#save(slResults,file="Figures/ocSpiderLearnerResults.rda")
 
-load("../Figures/ocSpiderLearnerResults.rda")
+load("Figures/ocSpiderLearnerResults.rda")
 
 # Load validation datasets
 
@@ -171,32 +171,32 @@ for(d in c(2:6,8,10:15)) # skip datasets 1,7, and 9 as described in selectYoshih
 scaledVal = data.frame(t(apply(validationLikelihoods,1,function(x){x<- (x-max(x))/max(abs(x))})))
 names(scaledVal) = c(candidateNames,"SpiderLearner")
 scaledVal$dataset = 1:15
-write.csv(scaledVal,"../Figures/scaledVal.csv")
+write.csv(scaledVal,"Figures/scaledVal.csv")
 
-# We (theoretically) get a better out-of-sample likelihood 
+# We theoretically get a better out-of-sample likelihood 
 # with the ensemble
 # Sample splitting is another way to demo
-# the utility of this method
+# the utility of this method. This is "internal cross-validation"
 
-### set.seed(1202)
-### trainIndices = sample(rep(1:10,26))
+set.seed(1202)
+trainIndices = sample(rep(1:10,26))
 
-### ensLoss = rep(NA,10)
-### candidateLoss = matrix(rep(NA,90),nrow=10,ncol=9)
-### for(k in 1:10)
-### {
-###   print(paste("Working in fold:",k))
-###   lateStageTrain = lateStageSmall[trainIndices != k,]
-###   lateStageTest = lateStageSmall[trainIndices == k,]
-###   slResultTrain = s$runSpiderLearner(lateStageTrain, K = 10, nCores = 10)
-###   ensLoss[k] = loglikLossfunction(slResultTrain$optTheta,lateStageTest)
-###   candidateLoss[k,] = sapply(slResultTrain$fullModels,loglikLossfunction,lateStageTest)
-### }
+ensLoss = rep(NA,10)
+candidateLoss = matrix(rep(NA,90),nrow=10,ncol=9)
+for(k in 1:10)
+{
+  print(paste("Working in fold:",k))
+  lateStageTrain = lateStageSmall[trainIndices != k,]
+  lateStageTest = lateStageSmall[trainIndices == k,]
+  slResultTrain = s$runSpiderLearner(lateStageTrain, K = 10, nCores = 5)
+  ensLoss[k] = loglikLossfunction(slResultTrain$optTheta,lateStageTest)
+  candidateLoss[k,] = sapply(slResultTrain$fullModels,loglikLossfunction,lateStageTest)
+}
 
-### df = as.data.frame(cbind(candidateLoss,ensLoss))
-### colnames(df)[1:9] = candidateNames
-### colnames(df)[10] = "SpiderLearner"
-### df$fold = 1:10
+df = as.data.frame(cbind(candidateLoss,ensLoss))
+colnames(df)[1:9] = candidateNames
+colnames(df)[10] = "SpiderLearner"
+df$fold = 1:10
 
-### write.csv(df,file="../Figures/internalCVResults.csv")
+write.csv(df,file="Figures/internalCVResults.csv")
 

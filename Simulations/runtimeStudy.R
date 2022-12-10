@@ -1,3 +1,4 @@
+library(config)
 library(ggplot2)
 library(huge)
 library(igraph)
@@ -6,6 +7,8 @@ library(moments)
 library(pracma)
 library(ensembleGGM)
 
+config = config::get(config="pilot_sim_runtime", file="Simulations/config.yml")
+print(config)
 
 standardize = function(x){return((x-mean(x))/sd(x))}
 sampleNetworkData = function(N, covMat)
@@ -47,48 +50,52 @@ testRuntime = function(nPred, nObs, nFolds, eightNetworks,sl,index=1)
 {  
   X = sampleNetworkData(N = nObs,covMat = solve(eightNetworks[[index]]))
   start_time = Sys.time()
-  ensModel = s$runSpiderLearner(X,K=nFolds,standardize=FALSE)
+  ensModel = s$runSpiderLearner(X,K=nFolds,standardize=FALSE,nCores = config$nCores)
   end_time = Sys.time()
   print(end_time - start_time)
   return(end_time - start_time)
 }
 
 
-source("generateSimGraphs.R")
+source("Simulations/generateSimGraphs.R")
 
 set.seed(42)
 eightNetworks = makeGoldStandardNets(25)
 
 runtimes = list()
 print("Runtime 1")
-runtimes[[1]] = testRuntime(25,10000,10,eightNetworks,s,1)
+runtimes[[1]] = testRuntime(25,10000,config$nFolds,eightNetworks,s,1)
 print("Runtime 2")
-runtimes[[2]] = testRuntime(25,1000,10,eightNetworks,s,1)
+runtimes[[2]] = testRuntime(25,1000,config$nFolds,eightNetworks,s,1)
 print("Runtime 3")
-runtimes[[3]] = testRuntime(25,100,10,eightNetworks,s,1)
+runtimes[[3]] = testRuntime(25,100,config$nFolds,eightNetworks,s,1)
 
 set.seed(42)
 eightNetworks = makeGoldStandardNets(75)
 
 print("Runtime 4")
-runtimes[[4]] = testRuntime(75,10000,10,eightNetworks,s,1)
+runtimes[[4]] = testRuntime(75,10000,config$nFolds,eightNetworks,s,1)
 print("Runtime 5")
-runtimes[[5]] = testRuntime(75,1000,10,eightNetworks,s,1)
+runtimes[[5]] = testRuntime(75,1000,config$nFolds,eightNetworks,s,1)
 print("Runtime 6")
-runtimes[[6]] = testRuntime(75,100,10,eightNetworks,s,1)
+s$removeCandidate("mle")
+runtimes[[6]] = testRuntime(75,100,config$nFolds,eightNetworks,s,1)
 
 set.seed(42)
 eightNetworks = makeGoldStandardNets(100)
 
-runtimes[[7]] = testRuntime(100,10000,10,eightNetworks,s,1)
+# this needs to be removed once 100/nFolds is less than p
+#s$removeCandidate("mle")
+print("Runtime 7")
+runtimes[[7]] = testRuntime(100,10000,config$nFolds,eightNetworks,s,1)
 print("Runtime 8")
-runtimes[[8]] = testRuntime(100,1000,10,eightNetworks,s,1)
+runtimes[[8]] = testRuntime(100,1000,config$nFolds,eightNetworks,s,1)
 
-s$removeCandidate("mle")
+# s$removeCandidate("mle")
 
 print("Runtime 9")
-runtimes[[9]] = testRuntime(100,100,10,eightNetworks,s,1)
+runtimes[[9]] = testRuntime(100,100,config$nFolds,eightNetworks,s,1)
 
 set.seed(42)
 print("Runtime 10")
-runtimes[[10]] = testRuntime(150,100,10,eightNetworks,s,1)
+runtimes[[10]] = testRuntime(150,100,config$nFolds,eightNetworks,s,1)

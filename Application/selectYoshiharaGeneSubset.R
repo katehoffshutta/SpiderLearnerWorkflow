@@ -54,7 +54,8 @@ trainAndValidData = list(exprs(GSE32062.GPL6480_eset),
                  exprs(PMID19318476_eset),
                  exprs(TCGA_eset))
 
-yoshi = read.table("YoshiharaGeneSet.tsv",sep="\t")
+yoshi = read.table("YoshiharaGeneSet.tsv",sep="\t",skip=1)
+
 # Figure out which of the 116 genes are in all of the datasets
 geneMatch = matrix(rep(NA,124*16),ncol=124)
 for(i in 1:length(identifiers))

@@ -1,9 +1,12 @@
 # Test libraries of three different sizes
-
+library(config)
 library(ensembleGGM)
 library(MASS)
 
-load("../Results/eightNetworksAC.rda")
+config = config::get(config="pilot_sim_library", file="Simulations/config.yml")
+print(config)
+
+load("Results/eightNetworksAC.rda")
 eightNetworks = ac
 precMat = eightNetworks[[6]] # scale-free high density
 print(nrow(precMat))
@@ -21,7 +24,7 @@ icewine = QGraphEBICCandidate$new(gamma = 0.5)
 
 librarySimRes = list()
 set.seed(1979)
-nSim = 100
+nSim = config$nSim
 for(i in 1:nSim)
 {
   print(paste("[Library Simulation]",i))
@@ -35,7 +38,7 @@ for(i in 1:nSim)
   s$addCandidate(elderberry)
   
   print("Minimal library")  
-  ensMod1 = s$runSpiderLearner(data,K = 10,FALSE,nCores=10)
+  ensMod1 = s$runSpiderLearner(data,K = config$nFolds,FALSE,nCores=config$nCores)
 
   # next, add the EBIC
   
@@ -43,7 +46,7 @@ for(i in 1:nSim)
   s$addCandidate(banana)
   
   print("Medium library")
-  ensMod2 = s$runSpiderLearner(data,K = 10,FALSE,nCores=10)
+  ensMod2 = s$runSpiderLearner(data,K = config$nFolds,FALSE,nCores=config$nCores)
   
   # next, add RIC/StARS/everything else
   
@@ -54,11 +57,11 @@ for(i in 1:nSim)
   s$addCandidate(icewine)
   
   print("Maximal library")
-  ensMod3 = s$runSpiderLearner(data,K = 10,FALSE,nCores=10)
+  ensMod3 = s$runSpiderLearner(data,K = config$nFolds,FALSE,nCores=config$nCores)
   
   ensMods = list(ensMod1, ensMod2, ensMod3)
   
   librarySimRes[[i]] = ensMods
-  save(librarySimRes,file="librarySimRes.rda")
+  save(librarySimRes,file="Results/Pilot/librarySimRes.rda")
 }
 

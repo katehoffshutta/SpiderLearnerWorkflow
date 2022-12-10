@@ -1,9 +1,11 @@
-library(devtools)
+#library(devtools)
+#install_github("katehoffshutta/ensembleGGM")
 library(ensembleGGM)
-library(MASS)
+library(clime)
 
-source("Simulations/errorMetrics.R")
-source("Simulations/simulations_config.R")
+source("errorMetrics.R")
+source("generateSimGraphs.R")
+source("simulations_config.R")
 
 sampleNetworkData = function(N, covMat)
 {
@@ -20,16 +22,9 @@ runSimulation = function(simConfig, whichNetworks = seq(1:8))
   settingD = ifelse(simConfig$.nPred == 100,TRUE,FALSE)
 
   set.seed(42) # this seed is ALWAYS 42
-  if(settingD) 
-  {
-    load("Results/eightNetworksD.rda")
-    eightNetworks = d
-  }
+  if(settingD) eightNetworks = makeGoldStandardNets_simD(P)
   else 
-  { 
-    load("Results/eightNetworksAC.rda")
-    eightNetworks = ac
-  }
+  { eightNetworks = makeGoldStandardNets(P)}
 
   relFrobNormsAfter = matrix(rep(NA,(M+2)*NS),nrow=NS)
   matrixRVs = matrix(rep(NA,(M+2)*NS),nrow=NS)
@@ -53,6 +48,7 @@ runSimulation = function(simConfig, whichNetworks = seq(1:8))
       
       ensModel = s$runSpiderLearner(thisSample,K=simConfig$.nFolds,standardize=FALSE,nCores=simConfig$.nCores)
       models = ensModel$fullModels
+      print(lapply(models,dim))
       for(i in 1:M)
       {
         relFrobNormsAfter[j,i] = relativeFrobNormAfter(models[[i]], thisNetwork)
@@ -87,7 +83,7 @@ runSimulation = function(simConfig, whichNetworks = seq(1:8))
                           "llTest"=llsTest)
       
       save(theseResults,
-           file=paste(c("Results/Pilot/", simConfig$.today,"_", suffixes[index], "_n_", simConfig$.nObs, "_p_",P,"_",config$candidates,"_simStudy.rda"),collapse=""))
+           file=paste(c(simConfig$.today,"_", suffixes[index], "_n_", simConfig$.nObs, "_p_",P,"_simStudy.rda"),collapse=""))
     }
   }
 }
@@ -111,22 +107,10 @@ candidates_ld = list(apple,
                      fraise,
                      grape,
                      honeydew,
-                     icewine)
+                     icewine,
+		     jicama)
 
 candidates_hd = candidates_ld[-5]
-
-candidates_ld_clime = list(apple,
-                     banana,
-                     clementine,
-                     date,
-                     elderberry,
-                     fraise,
-                     grape,
-                     honeydew,
-                     icewine,
-                     jicama)
-
-candidates_hd_clime = candidates_ld_clime[-5]
 
 suffixes = list("erLowPrec_RealData",
                 "erHighPrec_RealData",
