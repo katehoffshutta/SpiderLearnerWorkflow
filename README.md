@@ -1,5 +1,3 @@
-# README.md
-
 # SpiderLearner Workflow
 
 This repository contains the code for simulations testing the performance of our R package `ensembleGGM` and an illustrative application to ovarian cancer data. 
