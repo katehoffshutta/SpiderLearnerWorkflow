@@ -8,4 +8,3 @@ To allow the user to pilot these simulations and applications locally and alloca
 
 Please use GitHub issues to report general questions. For individual-specific questions, email Kate Hoff Shutta at kshutta at hsph.harvard.edu.
 
-
